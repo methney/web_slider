@@ -1,0 +1,145 @@
+var cookieName   = "HMIS";
+var cookieDomain = "";
+var cookiePath   = "/shville";
+
+/**
+ * Made By			: RedStone
+ * Function Name		: setCookie
+ * Function Definition	: Cookie객체를 생성 및 저장한다.
+ * Create Date		: 2005. 08. 11.
+ */
+function setCookie(name, value, expires, path, domain, secure) {
+	var curCookie = name + "=" + escape(value) +
+		((expires) ? "; expires=" + expires.toGMTString() : "") +
+		((path) ? "; path=" + path : "; path=" + cookiePath) +
+		((domain) ? "; domain=" + domain : "") +
+		((secure) ? "; secure" : "");
+
+	document.cookie = curCookie;
+}
+
+/**
+ * Made By			: RedStone
+ * Function Name		: getCookie
+ * Function Definition	: Cookie객체를 조회한다.
+ * Create Date		: 2005. 08. 11.
+ */
+function getCookie(name) {
+	var name = name + "=";
+	var startIndex = document.cookie.indexOf(name);
+	if (startIndex == -1) return null;
+
+	var endIndex = document.cookie.indexOf(";", startIndex + name.length);
+
+	if (endIndex == -1) endIndex = document.cookie.length;
+
+	return unescape(document.cookie.substring(startIndex + name.length, endIndex));
+}
+
+/**
+ * Made By			: RedStone
+ * Function Name		: deleteCookie
+ * Function Definition	: Cookie객체를 삭제한다.
+ * Create Date		: 2005. 08. 11.
+ */
+function deleteCookie(name, path, domain) {
+	if (getCookie(name)) {
+	  var date = new Date(1970, 01, 01, 00, 00, 00);
+		document.cookie = name + "=" +
+			((path) ? "; path=" + path : "; path=" + cookiePath) +
+			((domain) ? "; domain=" + domain : "") +
+			"; expires=" + date.toGMTString();
+	}
+}
+
+/**
+ * Made By			: RedStone
+ * Function Name		: isLogin
+ * Function Definition	: Login의 유무를 판단한다.
+ * Create Date		: 2005. 08. 11.
+ */
+function isLogin() {
+	var hmis = getCookie(cookieName);
+	if(hmis == '' || hmis == null)
+	{
+		return false;
+	}
+	return true;
+}
+
+/**
+ * Made By			: RedStone
+ * Function Name		: isCookieYN
+ * Function Definition	: HMIS Cookie의 유무를 판단한다.
+ * Create Date		: 2005. 08. 11.
+ */
+function isCookieYN() {
+	return isLogin();
+}
+
+function getCookieValue(name){
+	var txt = unescape(getCookie(cookieName));
+	var name = name + "=";
+	var startIndex = txt.indexOf(name);
+	if (startIndex == -1) return "";
+
+	var endIndex = txt.indexOf("&", startIndex + name.length)
+
+	if (endIndex == -1) endIndex = txt.length
+
+	return unescape(txt.substring(startIndex + name.length, endIndex))
+}
+
+/**
+ * Made By			: RedStone
+ * Function Name		: setHMISCookie
+ * Function Definition	: HMIS Cookie객체를 생성한다.
+ * Create Date		: 2005. 08. 11.
+ */
+function setHMISCookie(empNo, name, deptCd, deptNm, deptInfo, projCd, areaCd) {
+  var value = ((empNo)    ? "ID=" + empNo + "&" : "") +
+              ((name)     ? "NAME=" + name + "&" : "") +
+              ((deptCd)   ? "DEPTCD=" + deptCd + "&" : "") +
+              ((deptNm)   ? "DEPTNAME=" + deptNm + "&" : "") +
+              ((deptInfo) ? "DEPTINFO=" + deptInfo + "&" : "") +
+              ((projCd)   ? "PROJCD=" + projCd + "&" : "") +
+              ((areaCd)   ? "AREACD=" + areaCd + "&" : "");
+
+  var expdate = new Date();
+  expdate.setMinutes(expdate.getHours() + 12);  //유효기간 12시간
+
+  setCookie(cookieName, value, expdate, cookiePath);
+  //setCookie(cookieName, value);
+}
+
+/**
+ * Made By			: RedStone
+ * Function Name		: deleteHMISCookie
+ * Function Definition	: HMIS Cookie객체를 삭제한다.
+ * Create Date		: 2005. 08. 11.
+ */
+function deleteHMISCookie() {
+  deleteCookie(cookieName, cookiePath);
+}
+
+/**
+ * Made By            : 허준회
+ * Function Name      : getCookieAreaCd
+ * Function Definition: Cookie 객체에 저장되어 있는 AREA_CD를 반환
+ * Create Date        : 2005. 10. 06.
+ */
+function getCookieAreaCd() {
+  var cd  = getArray(getCookieValue("AREA_CD"), "＾");
+  return cd[0];
+}
+
+/**
+ * Made By            : 허준회
+ * Function Name      : getCookieProjCd
+ * Function Definition: Cookie 객체에 저장되어 있는 PROJ_CD를 반환
+ * Create Date        : 2005. 10. 06.
+ */
+function getCookieProjCd() {
+  var cd  = getArray(getCookieValue("PROJ_CD"), "＾");
+  return cd[0];
+}

@@ -1,0 +1,276 @@
+	/**
+	 * @author nox &lt;nox@lexken.co.kr&gt;, &lt;noxajax@gmail.com&gt;
+     * @version 0.5, 2007/09/10, initial revision
+     * @fileOverview
+     * 
+	 * <p>Copyright (C) 2007 Lexken Corporation. All rights reserved.</p>
+     *  
+     * Javascript의 String을 확장했으며 Java SDK의 String 객체와 유사하게 작성을 했습니다.<br />
+	 * 예외적으로 이미 지정된 keyword인 delete는 deletion으로 대체<br /><br />
+	 * 
+	 * 확장된 형태이기에 사용할때 const String, variable String 둘다에서 호출 가능하다.<br />
+	 *
+	 * <p>' '.trim(); // constr string!</p>
+	 * 
+	 * // variable String <br />
+	 * var nox = 'greenwaves'; <br />
+	 * nox.trim();
+	 */
+	   
+    /**
+     * @scope String.prototype
+     */
+    Object.extend(String.prototype, {
+        /**
+         * 삭제할 문자의 위치의 시작과 끝을 지정하면 해당 문자가 반환
+         * 
+         * @example
+         * '문자 자르기'.deletion(1, 2);
+         * 
+         * @param {integer} start 삭제할 문자열의 시작 위치
+         * @param {integer} end 삭제할 문자열의 끝 위치
+         * @exception StringIndexOutOfBoundsException
+         * @return {string} 해당 위치에 문자를 삭제한 후 반환
+         */    	
+        deletion: function (start, end) {
+            var source = this;
+            if (0 > start || 0 > end || start > end) throw ("StringIndexOutOfBoundsException");
+            return (source = source.substring(0, start) + source.substring(end + 1, source.length));
+        },
+        
+        /**
+         * offset위치에 문자를 삽입하고 그 결과를 반환
+         * 
+         * @example
+         * var value = 'insert string!';
+         * value.insert(value.length, '*Insert*');
+         * 
+         * @param {integer} offset
+         * @param {string} str
+         * @exception StringIndexOutOfBoundsException
+         * @return {string} 해당 위치에 문자를 추가한 후 반환
+         */
+        insert: function (offset, str) {
+            var source = this;
+            if (0 > offset || source.length < offset) throw ("StringIndexOutOfBoundsException");
+            return (source = source.substring(0, offset) + str + source.substring(offset, source.length));
+        },
+        
+        /**
+         * 문자의 포함된 모든 빈 문자를 없에고 길이를 검사해서 0 보다 크면 true 반환, form값 검사시 사용
+         * 
+         * @example
+         * ' '.isEmpty();
+         * value empty = '1';
+         * empty.isEmpty();
+         * 
+         * @return {boolean}
+         */
+        isEmpty: function () {
+            return 0 < this.replaceAllSpace().length ? false : true;
+        },
+        
+        /**
+         * 문자의 좌측 빈 문자를 없에고 문자 반환
+         * 
+         * @example
+         * ' ltrim Test!'.ltrim();
+         * 
+         * @return {string}
+         */
+        ltrim: function () {
+            return this.replace(/^\s+/, '');
+        },
+        
+        /**
+         * 문자에 포함된 모든 빈 문자를 없에고 true, false 반환
+         * 
+         * @example
+         * ' replace all space! '.replaceAllSpace();
+         * 
+         * @return {boolean}
+         */
+        replaceAllSpace: function () {
+            return this.replace(/\s*/g, '');
+        },
+
+        /**
+         * 문자열의 우측 빈 문자를 없에고 문자 반환
+         * 
+         * @example
+         * ' trim! '.trim();
+         * 
+         * @return {string}
+         */   
+        trim: function () {
+            return this.strip();
+        },
+        
+        /**
+         * 문자의 끝에 tail 문자를 붙여서 반환
+         * 
+         * @example
+         * 'suffix'.suffix(' >>> Tail');
+         * 
+         * @param {string} tail 문자 끝에 덧 붙일 문자
+         * @return {string}
+         */
+        suffix: function (tail) {
+        	return this.insert(this.length, (tail || ''));
+        },
+        
+        /**
+         * 문자의 앞에 head 문자를 붙여서 반환
+         * 
+         * @example
+         * 'prefix'.prefix('Head <<< ');
+         * 
+         * @param {string} head 문자열 처음에 덧 붙일 문자
+         * @return {string}
+         */        
+        prefix: function (head) {
+        	return this.insert(head, (head || ''));
+        },
+        
+        /**
+         * 문자의 왼쪽을 offset 만큼 자른 후 문자 반환
+         * 
+         * @example
+         * 'Left!'.right(2);
+         * 
+         * @param {integer} offset 문자열의 왼쪽에서 부터 자를 길이
+         * @exception StringIndexOutOfBoundsException
+         * @return {string}
+         */
+        left: function (offset) {
+        	var source = this.toString();
+            if (0 > offset || source.length < offset) throw ("StringIndexOutOfBoundsException");
+            return source.substr (0, offset);
+        },
+        
+        /**
+         * 문자의 오른쪽을 offset 만큼 자른 후 문자 반환
+         * 
+         * @example
+         * 'Right!'.right(2);
+         * 
+         * @param {integer} offset 문자열의 오른쪽에서 부터 자를 길이
+         * @exception StringIndexOutOfBoundsException
+         * @return {string}
+         */
+        right: function (offset) {
+        	var source = this.toString();
+            if (0 > offset || source.length < offset) throw ("StringIndexOutOfBoundsException");
+            return source.substr (source.length - offset, offset);
+        },
+        
+        /**
+         * 한글등 2byte 이상으로 처리하는 문자열의 전체 길이를 byte로 반환
+         * 
+         * @example
+         * 'a%b한÷韓'.getByteLength();
+         * @return {integer} 문자의 byte 수를 반환
+         */
+        getByteLength: function () {
+            for (var i = 0, length = 0; i < this.length; i++, length++) {
+                if (3 < encodeURIComponent(this.charAt(i)).length) length++;
+            }
+            return length;
+        },
+        
+        /**
+         * length byte 이하(truncation byte 포함한)로 문자를 자르고 truncation 문자열을 더해서 반환<br />
+         * IE에서만 maxlength가 제대로 처리 되지 않으니 되도록 byteTruncate라는 함수를 처리하시기 바랍니다
+         * 
+         * @example
+         * 'a%b한÷韓'.truncate(5);
+         * 'a%b한÷韓'.truncate(6, '##');
+         * 'a%b한÷韓'.byteTruncate(6, '!!!');
+         * 'a%b한÷韓'.byteTruncate(6, '!!!', true);
+         * 
+         * @param {integer} length 자를 문자의 byte 길이 
+         * @param {string} truncation length보다 string이 클 경우 붙일 문자
+         * @param {boolean} isHead true이면 truncation 문자열을 앞에다가 붙인다
+         * @return {string}
+         */
+        byteTruncate: function(length, truncation, isHead) {
+            truncation = (truncation === undefined ? '...' : truncation);
+            length = (length - truncation.getByteLength() || 30);
+            for (var i = 0, j = 0; j < length && i < this.length; i++, j++) {
+                if (3 < encodeURIComponent(this.charAt(i)).length) j++;
+                if (j >= length) break;
+            }
+            
+            return this.getByteLength() > length ? 
+                (isHead ? this.slice(0, i) + truncation : truncation + this.slice(0, i)) : this;
+        },
+        
+        /**
+         * UTF-8로 encode한 문자 반환
+         * 
+         * @example
+         * 'UTF-8로 만들기'.encodeUTF8();
+         * 
+         * @return {string} UTF-8로 변환한 문자 반환
+         */
+        encodeUTF8 : function () {
+            var utftext = '', source = this.replace(/\r\n/g, "\n");
+            for (var i = 0; i < source.length; i++) {
+                var c = source.charCodeAt(i);
+                if (c < 128) {
+                    utftext += String.fromCharCode(c);
+                } else if ((c > 127) && (c < 2048)) {
+                    utftext += String.fromCharCode((c >> 6) | 192);
+                    utftext += String.fromCharCode((c & 63) | 128);
+                } else {
+                    utftext += String.fromCharCode((c >> 12) | 224);
+                    utftext += String.fromCharCode(((c >> 6) & 63) | 128);
+                    utftext += String.fromCharCode((c & 63) | 128);
+                }
+            }
+            return utftext;
+        },
+        
+        /**
+         * UTF-8로 encode된 문자를 decode
+         * 
+         * @example
+         * value = 'UTF-8로 만들기';
+         * UTF8.decode(UTF8.encode(value));
+         * 'UTF-8로 만들기'.encodeUTF8().decodeUTF8();
+         * 
+         * @return {string} UTF-8문자를 decode한 문자 반환
+         */
+        decodeUTF8 : function () {
+            var string = '', utftext = this, i = 0, c = c1 = c2 = 0;
+            while (i < utftext.length) {
+                c = utftext.charCodeAt(i);
+                if (c < 128) {
+                    string += String.fromCharCode(c);
+                    i++;
+                } else if ((c > 191) && (c < 224)) {
+                    c2 = utftext.charCodeAt(i+1);
+                    string += String.fromCharCode(((c & 31) << 6) | (c2 & 63));
+                    i += 2;
+                } else {
+                    c2 = utftext.charCodeAt(i+1);
+                    c3 = utftext.charCodeAt(i+2);
+                    string += String.fromCharCode(((c & 15) << 12) | ((c2 & 63) << 6) | (c3 & 63));
+                    i += 3;
+                }
+            }
+            return string;
+        },
+        
+        /**
+         * HTML tag만 추출한다.
+         * 
+         * @return {string} HTML tag만 반환
+         */
+        pureHTML: function () {
+        	var source = this;
+        	return (source.match(/<("[^"]*"|'[^']*'|[^'">])*>/gi)).map(function (tag) {
+        		return tag;
+        	}).join('');
+        }        
+    });

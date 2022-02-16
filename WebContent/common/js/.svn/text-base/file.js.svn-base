@@ -1,0 +1,221 @@
+	/**
+	 * @author nox &lt;nox@lexken.co.kr&gt;, &lt;noxajax@gmail.com&gt;
+     * @version 0.5, 2007/10/14, initial revision
+     * @fileOverview
+     *
+	 * <p>Copyright (C) 2007 Lexken Corporation. All rights reserved.</p>
+     *
+     * 이 파일에는 파일 첨부를 위한 용도로 사용 합니다.<br />
+	 * 이 객체들을 사용하기 위해선 반드시 string.js, prototype.js(Ver.1.5.x 이상)을 포함해야 한다.
+	 */
+
+	/**
+	 * CommonUtil 객체는 공통으로 사용하는 기본적인 method들을 포함합니다. (IP, 숫자, 한글등 검사)
+	 * @static
+	 */
+	var LexkenFile = Class.create();    
+	LexkenFile.prototype = {    
+   	    /**
+   	     * @constructor
+   	     */		
+		initialize: function (arguments) {                    
+			this.DEF_INCREASE = 1;    
+			this.DEF_NAME_APPEND_FIX = false;        
+			this.DEF_PREFIX = 'up_file';        
+			this.DEF_FCLASS = 'up_file';        
+			this.DEF_DELFILE = 'deleteAttachedFile';
+			this.DEF_MAXCNT = 9999;	  
+			this.parents = new Hash();
+			if (!this.initializeFile(arguments)) return;    
+		},
+    
+   	    /**
+   	     * @example
+   	     * var params = { 'parents': [ 
+   	     * 						{ id: 'attachArea1', elemAdd: 'addImgClick1', elemDel: 'delImgClick1'
+   	     * 							, maxcnt: 1, increase: 3, prefix: 'up_img', allowExt: 'jpeg|jpg|gif' }
+   	     * 						, { id: 'attachArea2', elemAdd: 'addImgClick2', elemDel: 'delImgClick2'
+   	     * 							, maxcnt: 1, increase: 2, prefix: 'up_doc', allowExt: 'xls|doc|hwp' }
+   	     * 						, { id: 'attachArea3', elemAdd: 'addImgClick2', elemDel: 'delImgClick2' }    	      
+   	     * 					] 
+		 * 				};
+   	     * var objFile = new LexkenFile(params); 
+   	     * 
+   	     * @param {object} arguments - 초기화 값 JSON
+   	     */      
+		initializeFile: function (arguments) {
+            var parents = (typeof arguments != 'undefined' ? arguments['parents'] : '');
+            if (!parents) return false;
+            for (var i = 0, files = []; i < parents.length; i++) {
+                if (!!parents[i].id && !this.parents.get(parents[i].id)) {
+                	this.attachControlFile (parents[i]);
+                }                    
+            }
+        },
+        
+        attachControlFile: function (arg) {    
+        	// arg - undefined, arg not object, ahave exist!
+        	if (typeof arg == 'undefined' || typeof arg != 'object' || !!this.parents.get (arg.id)) return;
+        	
+        	this.parents.set (arg.id, arg);
+            this.attachInsFileEvent(arg);
+            this.attachDelFileEvent(arg); 
+            this.attachAllFileSelEvent(arg); 
+			for (var j = 0; arg.initCreate < arg.max && j < arg.initCreate; j++) {
+                files.push (this.createFileTags (arg.id, (arg.increase || this.DEF_INCREASE)));
+            }
+        },
+        
+   	    /**
+   	     * @param {object} regex RegExp(정규변환 객체) 또는 정규식 문자
+   	     * @param {string} search 정규식 검색 범위 i,m,g 없으면 global search
+   	     * @return {RegExp} 정규변환 객체 반환, regex가 null이면 빈 정규변환 객체 반환
+   	     */        
+        getMaxAttachCnt: function (element) {            
+            return (this.parents.get(element).maxcnt || this.DEF_MAXCNT);
+        },
+        
+        createFileTags: function (element, increase) {
+            var parent = this.parents.get(element), files = [];    
+            var len = this.getInputFiles($(parent.id)).length;        
+            for (var i = 0; i < (increase || parent.increase || this.DEF_INCREASE) 
+                && len < (parent.maxcnt || this.DEF_MAXCNT); i++) {
+                files.push(this.createFileTag (element, parent.prefix, parent.notCol, parent.fclass, parent.allowExt));
+            }
+            return files;
+        },    
+        
+        createFileTag: function (element, prefix, notCollection, fclass, allowExt) {   
+            if (typeof element == 'undefined' || !$(element)) return;
+            
+            var parent = $(element), len = this.getInputFiles(parent).length;
+            var div = document.createElement('div');
+            var del = document.createElement('input'); 
+            del.type = 'checkbox'; 
+            Element.setStyle (del, 'vertical-align:middle');
+            div.appendChild(del);
+             
+            var file = document.createElement('input');
+            file.id = parent.id + '_' + (prefix || this.DEF_PREFIX) + len;
+            file.name = (prefix || this.DEF_PREFIX) + (notCollection ? len : '');            
+            file.type = 'file';  
+            Element.setStyle(file, 'width:90%');
+            file.setAttribute ('allowExt', (allowExt || ''));
+            
+            div.appendChild(file);
+            parent.appendChild (div);
+            Element.Methods.addClassName(file.id, (fclass || this.DEF_FCLASS));
+            
+            // event!
+            var selectedListener = this.selectedFile.bindAsEventListener(this);
+            Event.observe(file, 'change', selectedListener);
+            return file;
+        },
+        
+        selectedFile: function (event) {
+            var file = Event.element(event);
+            file.setAttribute('isValidExt', 1);
+            if (!!file.getAttribute('allowExt')) {
+                var reg = new RegExp('(\.)+(' + file.getAttribute('allowExt') + ')+$', 'img');
+                file.setAttribute('isValidExt', (reg.test(file.value) ? 1 : 0));
+            }
+        },
+        
+        getInputElements: function (parent, typeName) {
+            var inputs = parent.getElementsByTagName('input');        
+            if (!typeName) return $A(inputs).map(Element.extend);        
+            for (var i = 0, matchingInputs = [], length = inputs.length; i < length; i++) {
+                var input = inputs[i];
+                if (!!typeName && input.type != typeName) continue;
+                matchingInputs.push(Element.extend(input));
+            }        
+            return matchingInputs;
+        },
+                
+        getInputFiles: function(parent) {
+            return this.getInputElements (parent, 'file');
+        }, 
+        
+        attachAllFileSelEvent: function(parent) {
+        	if (!parent || !parent.elemAll || !$(parent.elemAll)) return;
+        	var elem = $(parent.elemAll);
+        	elem.setAttribute ('attachArea', parent.id);
+            var allSelListener = this.allSelectFiles.bindAsEventListener(this);
+            Event.observe(elem, 'click', allSelListener);              
+        },
+         
+        allSelectFiles: function(event) {        	      
+            var elem = Event.element (event);
+    	    if (!elem.getAttribute('attachArea')) {
+    	    	Event.stop (event);  
+    	    	return;
+    	    }
+    	    	
+            var files = this.getInputFiles($(elem.getAttribute('attachArea')));
+            if (0 >= files.length) Event.stop (event);
+            $A(files).each(function (node) {  
+                if ('checkbox' == Element.previous(node).type) {
+                    Element.previous(node).checked = elem.checked;     
+                }
+            });
+        },
+                                 
+        attachInsFileEvent: function(parent) {
+        	if (!parent || !parent.elemAdd || !$(parent.elemAdd)) return; 
+        	var elem = $(parent.elemAdd);
+        	elem.setAttribute ('attachArea', parent.id);
+        	var insListener = this.addAttachFile.bindAsEventListener(this);
+            Event.observe(elem, 'click', insListener);
+        },
+          
+        addAttachFile: function(event) {
+        	var elem = Event.element (event);
+    		if (!elem.getAttribute('attachArea')) return;
+    		var attachArea = elem.getAttribute('attachArea'), parent = $(attachArea); 
+    		var maxCnt = this.getMaxAttachCnt(attachArea);
+    		var increase = this.parents.get(attachArea).increase + this.getInputFiles(parent).length;
+    		if (maxCnt <= this.getInputElements (parent, 'checkbox').length || increase > maxCnt) {
+    			alert('업로드 가능한 파일 첨부는 ' + maxCnt + '개 입니다.');
+                return;
+            }
+     		
+    		var nodes = this.createFileTags (attachArea);
+    	},
+    	
+    	attachDelFileEvent : function(parent) {    
+        	if (!parent || !parent.elemDel || !$(parent.elemDel)) return;     
+        	var elem = $(parent.elemDel);
+        	elem.setAttribute ('attachArea', parent.id);
+         	var delListener = this.removeAttachFile.bindAsEventListener(this);
+            Event.observe(elem, 'click', delListener);
+    	},
+    	
+    	removeAttachFile: function(event) {    
+    		var elem = Event.element (event);
+    		if (!elem.getAttribute('attachArea')) return;
+    		var bChecked = false, attachArea = elem.getAttribute('attachArea'), parent = $(attachArea);
+    		var files = this.getInputElements (parent, 'checkbox');
+    		$A(files).each(function (node) {
+    			if (!node.checked) return;
+    			if (!!node.getAttribute("isAttached")) {
+    				var delNode = '<input type="hidden" name="' 
+    							+ (this.parents.get(attachArea).delname || this.DEF_DELFILE) 
+    							+ '" value="' + node.value + '" />';				
+    				Insertion.Bottom($(gFormID), delNode);
+    			} 
+    			
+    			node.parentNode.parentNode.removeChild(node.parentNode);
+    			bChecked = true; 
+    		});
+    		
+    		if (0 >= this.getInputFiles(parent).length) {
+    			var allCheck = this.parents.get(attachArea).elemAll;
+    			if (!!$(allCheck)) $(allCheck).checked = false;
+    		}	    		
+    		
+    		if (!bChecked) {
+    			alert ('삭제할 항목을 선택 하세요.');
+    			return;
+    		}
+    	}
+    }

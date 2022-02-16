@@ -1,0 +1,3503 @@
+var CONTEXT = "/bsc";
+var JSP_URL = CONTEXT + "/jsp";
+var CSS_URL = CONTEXT + "/common/css";
+var JS_URL  = CONTEXT + "/common/js";
+var IMG_URL = CONTEXT + "/common/images";
+
+function fc_chk_byte(aro_name,ari_max)
+{
+	var ls_str = aro_name.value; // 이벤트가 일어난 컨트롤의 value 값
+	var li_str_len = ls_str.length; // 전체길이
+	
+	// 변수초기화
+	var li_max = ari_max; // 제한할 글자수 크기
+	var i = 0; // for문에 사용
+	var li_byte = 0; // 한글일경우는 2 그밖에는 1을 더함
+	var li_len = 0; // substring하기 위해서 사용
+	var ls_one_char = ""; // 한글자씩 검사한다
+	var ls_str2 = ""; // 글자수를 초과하면 제한할수 글자전까지만 보여준다.
+	
+	for(i=0; i< li_str_len; i++)
+	{
+	// 한글자추출
+	ls_one_char = ls_str.charAt(i);
+	
+		// 한글이면 2를 더한다.
+		if (escape(ls_one_char).length > 4)
+		{
+		li_byte += 2;
+		}
+		// 그밗의 경우는 1을 더한다.
+		else
+		{
+		li_byte++;
+		}
+	
+		// 전체 크기가 li_max를 넘지않으면
+		if(li_byte <= li_max)
+		{
+		li_len = i + 1;
+		}
+	}
+	//alert(li_byte);
+	// 전체길이를 초과하면
+	if(li_byte > li_max)
+	{
+	alert(ari_max + " 글자를 초과 입력할수 없습니다. \n 초과된 내용은 자동으로 삭제 됩니다. ");
+	ls_str2 = ls_str.substr(0, li_len);
+	aro_name.value = ls_str2;
+	
+	}
+	aro_name.focus(); 
+}
+
+//문자 크기 제한.2009.01.15
+function fc_chk_byte_return(aro_name,ari_max)
+{
+	var ls_str = aro_name.value; // 이벤트가 일어난 컨트롤의 value 값
+	var li_str_len = ls_str.length; // 전체길이
+	
+	// 변수초기화
+	var li_max = ari_max; // 제한할 글자수 크기
+	var i = 0; // for문에 사용
+	var li_byte = 0; // 한글일경우는 2 그밖에는 1을 더함
+	var li_len = 0; // substring하기 위해서 사용
+	var ls_one_char = ""; // 한글자씩 검사한다
+	var ls_str2 = ""; // 글자수를 초과하면 제한할수 글자전까지만 보여준다.
+	
+	var flag = true;
+	
+	for(i=0; i< li_str_len; i++)
+	{
+	// 한글자추출
+	ls_one_char = ls_str.charAt(i);
+	
+		// 한글이면 2를 더한다.
+		if (escape(ls_one_char).length > 4)
+		{
+		li_byte += 2;
+		}
+		// 그밗의 경우는 1을 더한다.
+		else
+		{
+		li_byte++;
+		}
+	
+		// 전체 크기가 li_max를 넘지않으면
+		if(li_byte <= li_max)
+		{
+		li_len = i + 1;
+		}
+	}
+	//alert(li_byte);
+	// 전체길이를 초과하면
+	if(li_byte > li_max)
+	{
+		alert(ari_max + " 글자를 초과 입력할수 없습니다. \n 초과된 내용은 자동으로 삭제 됩니다. ");
+		ls_str2 = ls_str.substr(0, li_len);
+		aro_name.value = ls_str2;
+		aro_name.focus(); 
+		flag = false;
+	}
+	return flag;
+}
+
+
+
+/*
+function onlyNumber()
+{
+	if(( event.keyCode >= 97 && event.keyCode <= 122) || (event.keyCode >=65 && event.keyCode <=90)) {  
+		event.keyCode=0;  
+	}  
+}
+*/
+    /* 특수 문자 추가. */
+    function onlyNumber()
+    {
+        if(event.keyCode >= 48 || event.keyCode <= 57 ||(event.keyCode >= 94 && event.keyCode <= 95) || ( event.keyCode >= 32 && event.keyCode <= 45) || (event.keyCode >= 96 && event.keyCode <= 122) || (event.keyCode >=58 && event.keyCode <=90)) {
+            event.keyCode=0;
+        }
+    }
+
+    /* 특수 문자 추가. */
+    function onlyFloat(){
+       log(event.keyCode); 
+      /*  if(event.keyCode == 47 || event.keyCode == 126 ||(event.keyCode >= 94 && event.keyCode <= 95) || ( event.keyCode >= 32 && event.keyCode <= 45) || (event.keyCode >= 96 && event.keyCode <= 122) || (event.keyCode >=58 && event.keyCode <=90)) {
+            event.keyCode=0;
+        }*/
+    }
+
+
+
+/* 특수 문자 추가. */
+function onlyNumberValue()
+{
+	if(event.keyCode == 47 || event.keyCode == 92 || event.keyCode == 126 ||(event.keyCode >= 94 && event.keyCode <= 95) || ( event.keyCode >= 32 && event.keyCode <= 44) || (event.keyCode >= 96 && event.keyCode <= 122) || (event.keyCode >=58 && event.keyCode <=90)) {  
+		event.keyCode=0;  
+	}  
+}
+// 주어진 패턴 공식에서 문자만 뽑아내서, 갯수를 세고 각 A,B,C는 patChar[i]형태로 배열에 저장한다.
+function extChar(patt) {
+	
+	var charReg;
+	charReg = /\d/; // 삭제할 부분 숫자
+	//   charReg = /[a-z|A-Z]/; // 알파벳만 인정
+	//   charReg = /[a-z]/; // 알파벳 소문자만 인정
+	charReg = /[A-Z]/; // 알파벳 대문자만 인정
+
+	var pattern=patt; // 패턴 공식 값 DB에서 읽어올 것
+	var Char="";
+	var patChar=pattern.split("");
+	
+	for(var i=0;i<patChar.length;i++) {
+		if(charReg.test(patChar[i]) )  {
+			Char+=patChar[i];
+		}
+	}
+	
+	return Char; //최종으로 뽑아낸 문자만 리턴해준다.
+}
+		   
+function replace(out,str,add) {
+	temp = "" + str;
+	while (temp.indexOf(out)>-1) {
+		pos= temp.indexOf(out);
+		temp = "" + (temp.substring(0, pos) + add + temp.substring((pos + out.length), temp.length));
+	}
+	result = temp;
+	return result;
+} 
+
+function trim(str){
+   //정규 표현식을 사용하여 화이트스페이스를 빈문자로 전환
+    str = str.replace(/^\s*/,'').replace(/\s*$/, ''); 
+
+   return str; //변환한 스트링을 리턴.
+  }
+
+// 객체 갯수만큼 초기화
+function setInit( initObj ){
+ var initedObjCd;
+
+ for (var i = 0 ; i < arguments.length ; i++) {
+  initedObjCd = eval("document.frm1." + arguments[i]);
+  initedObjCd.value = '';
+ }
+}
+
+
+var progressWindow ; // 작업중 화면 reference 
+
+var windowWidth = 300 ;
+var windowLeft = Math.ceil((screen.width - windowWidth) / 2 );			
+var windowHeight = 100;              
+var windowTop =  Math.ceil((screen.height - windowHeight) / 2 ); 	
+
+function ViewMessage() 
+{
+
+   //alert('닫기 단추(X)를 누르지마십시요') ;
+   openWindow();
+
+}
+
+ /**
+ * @type   : function
+ * @access : public
+ * @desc   : 작업중 윈도우 표시  
+ * @author : 최의엽
+ * @modify : 
+ */ 
+ function openWindow() 
+ {
+     progressWindow = window.open( JS_URL + "/progress.htm","progress","top="+windowTop+",left="+windowLeft+",width="+windowWidth+",height="+windowHeight+",menubar=no,status=no,titlebar=no" );
+ }
+
+ 
+
+ /**
+ * @type   : function
+ * @access : public
+ * @desc   : 작업중 윈도우 종료  
+ * @author : 최의엽
+ * @modify : 
+ */ 
+
+function closeWindow() 
+{  
+    try 
+    {     
+        progressWindow.selfClose();    
+    }
+    catch( Exception )
+    { 
+        // 윈도우가 이미 닫힌 경우 그냥 무시한다. 	 
+    }
+}
+
+/**
+ * 화면의 Select object 컨트롤
+ */
+function disableSelect(disabled){
+	var oElements = document.getElementsByTagName("SELECT");
+    
+    
+    if (disabled == undefined) {
+    	disabled = true;
+    } else {
+    	disabled = disabled;
+    }
+
+	for (var i = 0; i < oElements.length; i++) {
+		oElements.item(i).disabled = disabled;
+	}
+
+}
+
+ /**
+ * @type   : function
+ * @access : public
+ * @desc   : 특정 체크박스의 모두 선택
+			 파라미터 target_checkbox는 해당 폼이름을 포함한 체크박스 이름이어야 한다.
+ * @author : 최규일
+ * @modify : 
+ */ 
+function all_check(target_checkbox)
+{
+	var isChecked = true;
+
+	try
+	{
+		if(target_checkbox.length == undefined)
+		{
+			if (target_checkbox.checked) 
+				target_checkbox.checked = false;
+			else 
+				target_checkbox.checked = true;
+		}
+		else
+		{
+			//체크 박스가 모두 체크되어 있는지를 검사한다.
+			for(i=0; i < target_checkbox.length; i++) 
+			{
+				if(!target_checkbox[i].checked)
+					isChecked = false;
+			}
+			
+			if(!isChecked) //체크가 안 된 것이 있다면 모두 체크가 되게한다.
+			{
+				for(i=0; i < target_checkbox.length; i++) 
+					target_checkbox[i].checked = true;
+			} 
+			else //모두 체크가 되어 있다면
+			{
+				for(i=0; i < target_checkbox.length; i++) 
+					target_checkbox[i].checked = false;
+			}
+		}
+		
+	}
+	catch(E)
+	{
+//		alert("Exception :"+E);
+	}
+}
+
+ /**
+ * @type   : function
+ * @access : public
+ * @desc   : 전체 셀렉트박스에 option index = 0 에 추가 body onLoad="SelectAllAdd();"
+ * @author : 
+ * @modify : 
+ */ 
+var optionValue		= "";
+var optionText		= "미지정";
+
+function SelectAllAdd(){
+	var oElements = document.getElementsByTagName("SELECT");
+	var isAllAdd = true;
+
+	if(isAllAdd==true){
+		for (var i = 0; i < oElements.length; i++) {
+			var optionsAdd = new Option();
+			oElements.item(i).options[oElements.item(i).options.length] = optionsAdd;
+			for(var j=oElements.item(i).options.length-2; j >= 0; j--){
+				oElements.item(i).options[j+1].value = oElements.item(i).options[j].value;
+				oElements.item(i).options[j+1].text = oElements.item(i).options[j].text;
+				oElements.item(i).options[j+1].selected = oElements.item(i).options[j].selected;
+			}
+			oElements.item(i).options[0].value = optionValue;
+			oElements.item(i).options[0].text = optionText;
+		}
+	}
+}
+
+ /**
+ * @type   : function
+ * @access : public
+ * @desc   : 셀렉트박스 전체 options 삭제 && 구분자로 여러 셀렉트박스처리
+ * @author : 
+ * @modify : 
+ */ 
+function selectBox_removeAll(ObjName){
+	var Obj = ObjName.split("&&");
+
+	for(var h = 0; h < Obj.length; h++){
+		try{
+			var selObj = eval("frm1."+Obj[h]);
+			
+			for (var i=selObj.length-1; i>=0; i--){
+				selObj.options[i] = null;
+			}
+		}catch(e){}
+	}
+}
+
+
+ /**
+ * @type   : function
+ * @access : public
+ * @desc   : 빈 메서드
+ * @author : 
+ * @modify : 
+ */ 
+function inputParent(code, name, choose_yn,level_id,flag){
+   
+   return true; 
+}
+
+
+/**
+ * @type   : function
+ * @access : public
+ * @desc   : 파일 업로드
+ * @author : 
+ * @modify : 
+ */ 
+function fileUpload(seq){
+	var win = window.open(JSP_URL + "/common/PopAttach.jsp?seq="+seq,"attachPop","status=no,scrollbars=no,resizable=no,top=50,left=300,width=480,height=120");
+    win.focus();
+}
+
+
+/**
+ * @type   : function
+ * @access : public
+ * @desc   : 파일 다운로드
+ * @author : 
+ * @modify : 
+ */ 
+function fileDownload( attatch_file_nm, attach_file_fnm, attach_file_path, targetName, mode ){
+    var form_name = document.fileDownForm;
+    form_name.attach_file_nm.value 	= attatch_file_nm;
+    form_name.attach_file_fnm.value	= attach_file_fnm;
+	form_name.attach_file_path.value= attach_file_path;
+    form_name.mode.value 			= mode;
+    form_name.action	           	= JSP_URL + "/common/FileDownload.jsp";
+    form_name.target	           	= targetName;
+    form_name.submit();
+}
+
+/**
+ * @type   : function
+ * @access : public
+ * @desc   : enter key search
+ * @author : 
+ * @modify : 
+ */ 
+function KeySearch() {
+	var keyCode = event.keyCode ? event.keyCode : 
+	event.which ? event.which : event.charCode;
+	
+	if (keyCode==13) {
+		selectDB();
+	}
+}
+
+/**
+ * @type   : function
+ * @access : public
+ * @desc   : cookie setting
+ * @author : 
+ * @modify : 
+ */
+function setBscCookie (name, value, expires) {
+  document.cookie = name + "=" + escape (value) +
+    "; path=/; expires=" + expires.toGMTString();
+}
+
+/**
+ * @type   : function
+ * @access : public
+ * @desc   : get cookie
+ * @author : 
+ * @modify : 
+ */
+function getBscCookie(Name) {
+  var search = Name + "="
+  if (document.cookie.length > 0) { // 쿠키가 설정되어 있다면
+    offset = document.cookie.indexOf(search)
+    if (offset != -1) { // 쿠키가 존재하면
+      offset += search.length
+      // set index of beginning of value
+      end = document.cookie.indexOf(";", offset)
+      // 쿠키 값의 마지막 위치 인덱스 번호 설정
+      if (end == -1)
+        end = document.cookie.length
+      return unescape(document.cookie.substring(offset, end))
+    }
+  }
+  return "";
+}
+
+
+
+function replaceString(sText, str1, str2)
+{
+    var isFind, ieFind, sTextLength;
+    var replacedStr;
+    if(sText.indexOf(str1) >=0 )
+    {
+        isFind = sText.indexOf(str1);
+        ieFind = sText.lastIndexOf(str1);
+        sTextLength = str1.length ;
+        ieFind = (isFind + sTextLength);
+        replacedStr = sText.substring(0, isFind) + str2 + sText.substring(ieFind);
+    }
+    else
+    {
+        return sText;
+    }
+
+    return replacedStr;
+}
+
+
+    var    _natValue   = '0123456789';
+    var    _intValue   = '-0123456789';
+    var    _floatValue = '-0123456789.';
+    var    _ipValue = '0123456789.';
+    var    _upperValue = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+    var    _lowerValue = 'abcdefghijklmnopqrstuvwxyz';
+    var    _etcValue   = ' ~`!@#$%%^&*()-_=+\|[{]};:\'\",<.>/?';
+    var _dayOfMonth = new Array(31,28,31,30,31,30,31,31,30,31,30,31);
+
+    var IEYES = 0;
+    var menufacture = navigator.appName;
+    var version = navigator.appVersion;
+    var brow = navigator.appName;
+
+    if((0 < brow.indexOf('Explorer'))
+      && (version.indexOf('4') >= 0 || version.indexOf('5') > 0
+      || veirsioni.indexOf('6') > 0 || veirsioni.indexOf('7') > 0
+      || veirsioni.indexOf('8') > 0 || veirsioni.indexOf('9') > 0))
+    {
+         IEYES = 1;
+    }
+
+function CheckByte(str)
+{
+    var i;
+    var strLen;
+    var strByte;
+    strLen = str.length;
+
+    if(IEYES == 1)
+    {
+        for(i=0, strByte=0;i<strLen;i++)
+        {
+            if(str.charAt(i) >= ' ' && str.charAt(i) <= '~' )
+                strByte++;
+            else
+                strByte += 2;
+        }
+        return strByte;
+    }
+    else
+    {
+        return strLen;
+    }
+}
+
+/*function ltrim(para)
+{
+    while(para.substring(0,1) == ' ')
+        para = para.substring(1, para.length);
+    return para;
+}*/
+/*function mtrim(para)
+{
+    for ( i = 0; i < para.length;)
+        if ( para.substring(i,i+1) == ' ' )
+            para = para.substring(0, i) + para.substring(i+1, para.length);
+        else
+            i++;
+    return para;
+}*/
+
+/*function rtrim(para)
+{
+    while(para.substring(para.length-1, para.length) == ' ')
+        para = para.substring(0, para.length-1);
+    return para;
+}*/
+
+
+function montharr(m0, m1, m2, m3, m4, m5, m6, m7, m8, m9, m10, m11)
+{
+    this[0] = m0; this[1] = m1; this[2] = m2; this[3] = m3;
+    this[4] = m4; this[5] = m5; this[6] = m6; this[7] = m7;
+    this[8] = m8; this[9] = m9; this[10] = m10; this[11] = m11;
+}
+
+/*function lastday(calyear, calmonth)
+{
+    var monthDays = new montharr(31, 28, 31, 30, 31, 30, 31, 31,30, 31, 30, 31);
+    if (((calyear % 4 == 0) && (calyear % 100 != 0)) || (calyear % 400 == 0))
+        monthDays[1] = 29;
+    var nDays = monthDays[calmonth - 1];
+    return nDays;
+}*/
+
+function IsUpper(value)
+{
+    var   i;
+
+    for (i = 0; i < _upperValue.length; i++)
+        if(value == _upperValue.charAt(i))
+            return true;
+    return false;
+}
+
+function IsLower(value)
+{
+    var   i;
+
+    for (i = 0; i < _lowerValue.length; i++)
+        if(value == _lowerValue.charAt(i))
+            return true;
+    return false;
+}
+
+function IsNat(value)
+{
+    var   j;
+
+    for (j = 0; j < _natValue.length; j++)
+        if(value == _natValue.charAt(j))
+            return true;
+    return false;
+}
+
+function IsInt(value)
+{
+    var   j;
+
+    for (j = 0; j < _intValue.length; j++)
+        if(value == _intValue.charAt(j))
+            return true;
+    return false;
+}
+
+function IsFloat(value)
+{
+    var   j;
+
+    for (j = 0; j < _floatValue.length; j++)
+        if(value == _floatValue.charAt(j))
+            return true;
+    return false;
+}
+
+function IsIP(value)
+{
+    var   j;
+
+    for (j = 0; j < _ipValue.length; j++)
+        if(value == _ipValue.charAt(j))
+            return true;
+    return false;
+}
+
+function IsEtc(value)
+{
+    var   j;
+
+    for (j = 0; j < _etcValue.length; j++)
+        if(value == _etcValue.charAt(j))
+            return true;
+    return false;
+}
+
+function IsTelChar(value)
+{
+    var   j;
+
+    for(j = 0; j < _intValue.length; j++)
+        if(value == _intValue.charAt(j) || value == '-')
+            return true;
+    return false;
+}
+
+function IsTel(tel)
+{
+    var    i;
+
+    for (i = 0; i < tel.length; i++)
+        if(!IsTelChar(tel.charAt(i)))
+            return false;
+    return true;
+}
+
+function IsNatStr(obj)
+{
+    var     i;
+    var     str = null;
+    var     tmp = null;
+
+    str = new String(obj.value);
+
+    if (str == null || str.length == 0)
+    {
+        obj.value = 0;
+        return true;
+    }
+    tmp =  parseInt(obj.value, 10);
+    if (isNaN(tmp) == true)
+    {
+        obj.focus();
+        obj.select();
+        return false;
+    }
+    for (i = 0; i < str.length; i++)
+        if(!IsNat(str.charAt(i)))
+        {
+            obj.focus();
+            obj.select();
+            return false;
+        }
+
+    obj.value = tmp;
+    return true;
+}
+
+function IsIntStr(obj)
+{
+    var     i;
+    var     str = null;
+    var     tmp = null;
+
+    str = new String(obj.value);
+
+    if (str == null || str.length == 0)
+    {
+        obj.value = 0;
+        return true;
+    }
+    tmp =  parseInt(obj.value, 10);
+    if (isNaN(tmp) == true)
+    {
+        obj.focus();
+        obj.select();
+        return false;
+    }
+    for (i = 0; i < str.length; i++)
+        if(!IsInt(str.charAt(i)))
+        {
+            obj.focus();
+            obj.select();
+            return false;
+        }
+
+    obj.value = tmp;
+    return true;
+}
+
+function IsFloatStr(obj)
+{
+    var    i;
+    var    str = null;
+    var     tmp = null;
+
+    str = new String(obj.value);
+
+    if (str == null || str.length == 0)
+    {
+        obj.value = 0;
+        return true;
+    }
+    tmp =  parseFloat(obj.value);
+
+    if (isNaN(tmp) == true)
+    {
+        obj.focus();
+        obj.select();
+        return false;
+    }
+    for (i = 0; i < str.length; i++)
+        if(!IsFloat(str.charAt(i)))
+        {
+            obj.focus();
+            obj.select();
+            return false;
+        }
+
+    obj.value = tmp;
+    return true;
+}
+
+function IsIPStr(obj)
+{
+    var    i;
+    var    str = null;
+
+    str = new String(obj.value);
+
+    if (str == null || str.length == 0)
+    {
+        return true;
+    }
+    for (i = 0; i < str.length; i++)
+        if(!IsIP(str.charAt(i)))
+        {
+            obj.focus();
+            obj.select();
+            return false;
+        }
+    return true;
+}
+
+/*function IsLeapYear(year)
+{
+    if(year % 4 == 0)
+    {
+        if(year % 100 == 0)
+        {
+            if(year % 400 == 0)
+                return true;
+            return false;
+        }
+        else
+            return true;
+    }
+    return false;
+}*/
+
+function IsLeapYear(year)
+{
+    if(year % 4 == 0)
+    {
+        if(year % 100 == 0)
+        {
+            if(year % 400 == 0)
+                return true;
+            return false;
+        }
+        else
+            return true;
+    }
+    return false;
+}
+
+function SetDaySelectBox(yearObj, monthObj, dayObj)
+{
+    var    i, year, month ;
+
+    year = parseInt(yearObj.options[yearObj.selectedIndex].text,10);
+
+    month = parseInt(monthObj.options[monthObj.selectedIndex].text,10);
+
+    if (IsLeapYear(year) == true)
+        _dayOfMonth[1] = 29;
+    else
+        _dayOfMonth[1] = 28;
+
+    dayObj.length = _dayOfMonth[month - 1];
+
+    for (i = 1; i <= dayObj.length; i++)
+    {
+        dayObj.options[i - 1].text  = (i < 10) ? ('0' + i) : i;
+    }
+}
+
+function UnComma(input)
+{
+    var    inputString  = new String;
+    var    outputString = new String;
+    var    outputNumber = new Number;
+    var    counter = 0;
+
+    inputString  = input;
+    outputString = '';
+
+    for (counter = 0; counter < inputString.length; counter++)
+    {
+        outputString += (inputString.charAt(counter) != ',' ?
+                         inputString.charAt(counter) : '');
+    }
+    outputNumber = parseFloat(outputString);
+    return (outputNumber);
+}
+
+function Comma(input)
+{
+    var inputString = new String;
+    var outputString = new String;
+    var counter = 0;
+    var decimalPoint = 0;
+    var end =0;
+
+    inputString = input.toString();
+
+    outputString = '';
+
+    decimalPoint = inputString.indexOf('.', 1);
+
+    if(decimalPoint == -1)
+    {
+        end = inputString.length;
+        for (counter = 1; counter <= inputString.length; counter++)
+        {
+            outputString = (counter % 3 == 0  && counter < end ? ',' : '') +
+                           inputString.charAt(inputString.length - counter) +
+                           outputString;
+        }
+    }
+    else
+    {
+        end = decimalPoint - (inputString.charAt(0) == '-' ? 1 : 0);
+        for (counter = 1; counter <= decimalPoint; counter++)
+        {
+            outputString = (counter % 3 == 0 && counter < end ? ',' : '') +
+                         inputString.charAt(decimalPoint - counter) +
+                         outputString;
+        }
+        for (counter = decimalPoint; counter < decimalPoint + 3; counter++)
+        {
+            outputString += inputString.charAt(counter);
+        }
+    }
+    return (outputString);
+}
+function check_int_plus(comp)
+{
+    var  i;
+    var  str = new String(comp.value);
+
+    for( i=0; i<str.length; i++ )
+        if( !IsInt( str.charAt(i) ) )
+            return false;
+
+    return true;
+}
+
+function del_slash(para)
+{
+    for (i = 0; i < para.length;)
+        if (para.substring(i, i + 1) == '/' )
+            para = para.substring(0, i) + para.substring(i + 1, para.length);
+        else
+            i++;
+    return para;
+}
+
+function add_slash(para)
+{
+    var str = '';
+    if (para.length != 8)
+        return para;
+    str = para.substring(0,4) + '/';
+    str = str + para.substring(4,6) + '/';
+    str = str + para.substring(6,8);
+    return str;
+}
+
+function chkNumber()
+{
+    if(event.keyCode ==8 ) return;      //backspace
+    if(event.keyCode ==9 ) return;      //TAB
+    if(event.keyCode ==33 ) return;     //PageUp
+    if(event.keyCode ==34 ) return;     //PageDown
+    if(event.keyCode ==35 ) return;     //EndKey
+    if(event.keyCode ==36 ) return;     //HomeKey
+    if(event.keyCode ==46 ) return;     //DeleteKey
+    if(event.keyCode ==190 ) return;
+    if(event.keyCode ==110 ) return;
+    if(event.keyCode >=37 && event.keyCode <= 40 ) return;  //CURSOR KEY
+    if((event.keyCode<48)||(event.keyCode>57 && event.keyCode<96)||(event.keyCode>105)){
+         event.returnValue=false;
+    }
+}
+
+function chkNumberMinus()
+{
+    if(event.keyCode ==8 ) return;      //backspace
+    if(event.keyCode ==9 ) return;      //TAB
+    if(event.keyCode ==33 ) return;     //PageUp
+    if(event.keyCode ==34 ) return;     //PageDown
+    if(event.keyCode ==35 ) return;     //EndKey
+    if(event.keyCode ==36 ) return;     //HomeKey
+    if(event.keyCode ==46 ) return;     //DeleteKey
+    if(event.keyCode == 109 ) return;   //Minus
+    if(event.keyCode == 189 ) return;   //Minus
+    if(event.keyCode ==190 ) return;
+    if(event.keyCode ==110 ) return;
+    if(event.keyCode >=37 && event.keyCode <= 40 ) return;  //CURSOR KEY
+    if((event.keyCode<48)||(event.keyCode>57 && event.keyCode<96)||(event.keyCode>105)){
+         event.returnValue=false;
+    }
+}
+
+function chkNumberMinusC()
+{
+    if(event.keyCode ==8 ) return;      //backspace
+    if(event.keyCode ==9 ) return;      //TAB
+    if(event.keyCode ==33 ) return;     //PageUp
+    if(event.keyCode ==34 ) return;     //PageDown
+    if(event.keyCode ==35 ) return;     //EndKey
+    if(event.keyCode ==36 ) return;     //HomeKey
+    if(event.keyCode ==46 ) return;     //DeleteKey
+    if(event.keyCode == 109 ) return;   //Minus
+    if(event.keyCode == 189 ) return;   //Minus
+    if(event.keyCode ==190 ) return;
+    if(event.keyCode ==110 ) return;
+    if(event.keyCode ==188 ) return;
+    if(event.keyCode >=37 && event.keyCode <= 40 ) return;  //CURSOR KEY
+    if((event.keyCode<48)||(event.keyCode>57 && event.keyCode<96)||(event.keyCode>105)){
+         event.returnValue=false;
+    }
+}
+
+function chkNumberComma()
+{
+    if(event.keyCode ==8 ) return;      //backspace
+    if(event.keyCode ==9 ) return;      //TAB
+    if(event.keyCode ==33 ) return;     //PageUp
+    if(event.keyCode ==34 ) return;     //PageDown
+    if(event.keyCode ==35 ) return;     //EndKey
+    if(event.keyCode ==36 ) return;     //HomeKey
+    if(event.keyCode ==46 ) return;     //DeleteKey
+    if(event.keyCode ==109 ) return;   //Minus
+    if(event.keyCode ==189 ) return;   //Minus
+    if(event.keyCode ==188 ) return;
+    if(event.keyCode >=37 && event.keyCode <= 40 ) return;  //CURSOR KEY
+    if((event.keyCode<48)||(event.keyCode>57 && event.keyCode<96)||(event.keyCode>105)){
+         event.returnValue=false;
+    }
+}
+
+
+function chkIntNumber()
+{
+    if(event.keyCode ==8 ) return;      //backspace
+    if(event.keyCode ==9 ) return;      //TAB
+    if(event.keyCode ==33 ) return;     //PageUp
+    if(event.keyCode ==34 ) return;     //PageDown
+    if(event.keyCode ==35 ) return;     //EndKey
+    if(event.keyCode ==36 ) return;     //HomeKey
+    if(event.keyCode ==46 ) return;     //DeleteKey
+    if(event.keyCode >=37 && event.keyCode <= 40 ) return;  //CURSOR KEY
+    if((event.keyCode<48)||(event.keyCode>57 && event.keyCode<96)||(event.keyCode>105)){
+         event.returnValue=false;
+    }
+}
+
+function lrtrim(src)
+{
+    var search = 0
+
+    while ( src.charAt(search) == " ")
+    {
+        search = search + 1
+    }
+
+    src = src.substring(search, (src.length))
+
+    search = src.length - 1
+
+    while (src.charAt(search) ==" ")
+    {
+        search = search - 1
+    }
+
+    return src.substring(0, search + 1)
+}
+
+function is_dateformat(strDate)
+{
+      var strMonth = new Array(31,28,31,30,31,30,31,31,30,31,30,31);
+
+      if ( strDate.length != 10 )
+      	  return false;
+
+      var YYYY  = eval(strDate.substr(0,4));
+      var MM    = eval(strDate.substr(5,2));
+      var DD    = eval(strDate.substr(8,2));
+
+      if ( !IsNumeric(YYYY) || !IsNumeric(MM) || !IsNumeric(DD) )
+           return false;
+		if ( strDate.charAt(4) != '-' || strDate.charAt(7) != '-' )
+			  return false
+
+      var MonthDays = (YYYY != 2) ? strMonth[MM-1] : (( YYYY%4==0 && YYYY%100 !=0 || YYYY%400 ==0 ) ? 29:28 );
+
+      if( ( MM <13 && MM >0 && DD >0 && DD <= MonthDays) == false )
+      	 return false;
+
+      return true;
+}
+
+function replaceStr(str, from, to)
+{
+        if( str==null || str == "" )
+            return "";
+
+	var i = 0;
+        var rStr = "";
+        while( str.indexOf(from) > -1 )
+        {
+            i = str.indexOf(from);
+            rStr += str.substring(0,i) + to;
+            str = str.substring( i+from.length );
+        }
+	return rStr+str;
+}
+
+function BytesToLen(inputText,dbMax) {
+	var len = 0;
+	var text = inputText;
+	var max = dbMax;
+	var temp = "";
+
+        if (text.length == 0) {
+            return false;
+        }else{
+            len = 0;
+            for (i=0;i < text.length;i++) {
+            	temp = "";
+            	temp = escape(text.charAt(i));
+            	if(temp.length>3){
+            	    len+=2;
+            	}else{
+            	    len++;
+            	}
+
+            	if (len > max) {
+            	   return false;
+            	}
+            }
+            return true;
+	    }
+}
+
+function checkByteLen(inputText,dbMax)
+{
+	var text = inputText;
+	var max = dbMax;
+
+    if( CheckByte(text) > dbMax)
+    {
+        return false;
+    }
+    else
+    {
+        return true;
+    }
+}
+
+function checkStrLen(inputText, MaxLen)
+{
+	var i, len=0;
+
+	for(i=0 ; i < inputText.length ; i++) (inputText.charCodeAt(i) > 255)? len+=2:len++;
+
+	if (MaxLen < len)
+		return false;
+	else
+		return true;
+}
+
+function getElementById(id)
+{
+	return document.getElementById(id);
+}
+
+function setValue(obj, value)
+{
+	obj.value = value;
+}
+
+function setText(obj, value)
+{
+	obj.innerText = value;
+}
+
+function setHtml(obj, value)
+{
+	obj.innerHTML = value;
+}
+
+
+
+   //------------------- 업무구상 큐블릿 소스에서 퍼옴---------------------------//
+   /* 페이지에 추가 필요
+   <div id="HelpViewerDAC" style="width:0px; height:0px; position:absolute; left:1; z-index:1; visibility:hidden; overflow:no;"></div>
+   */
+   var tipStyle = "style='word-break:break-all;padding:1;'";
+
+   function showHelpDAC(Msg) {
+   	var tooltip = document.all.HelpViewerDAC;
+
+   	followMouseDAC();
+
+   	var buff = "<table border=0 cellpadding=2 cellspacing=1 bgcolor=#717171 height=20>";
+   	buff = buff + "<tr><td class=tb_left valign=middle height=20 bgcolor=lightyellow "+tipStyle+">";
+   	buff = buff + "&nbsp;"+Msg+"&nbsp;&nbsp;</td></tr>";
+   	buff = buff + "</table>";
+
+   	tooltip.innerHTML = buff;
+   	tooltip.style.visibility = "visible";
+   }
+
+   function hideHelpDAC() {
+   	var tooltip = document.all.HelpViewerDAC;
+
+   	tooltip.style.visibility = "hidden";
+   	tooltip.innerHTML = "";
+   }
+
+   function followMouseDAC() {
+   	var tooltip = document.all.HelpViewerDAC;
+
+   	tooltip.style.top = document.body.scrollTop + event.clientY + 1;
+   	if(event.clientX>530) {
+   		tooltip.style.left = document.body.scrollLeft + event.clientX - 265;
+   	} else {
+   		tooltip.style.left = document.body.scrollLeft + event.clientX + 15;
+   	}
+   }
+
+
+
+   //------------------- 업무구상 큐블릿 소스에서 퍼옴---------------------------//
+
+
+
+//-정경욱--------------------------------------------------------------------------//
+   function showHelpDAC2(Msg, Xtop, Ytop) {
+   	var tooltip = document.all.HelpViewerDAC;
+
+  	followMouseDAC2(Xtop, Ytop);
+
+   	var buff = "<table border=0 cellpadding=2 cellspacing=1 bgcolor=#717171 height=20>";
+   	buff = buff + "<tr><td class=tb_left valign=middle height=20 bgcolor=lightyellow "+tipStyle+">";
+   	buff = buff + "&nbsp;"+Msg+"&nbsp;&nbsp;</td></tr>";
+   	buff = buff + "</table>";
+
+   	tooltip.innerHTML = buff;
+   	tooltip.style.visibility = "visible";
+   }
+
+   function followMouseDAC2(Xtop, Ytop) {
+   	var tooltip = document.all.HelpViewerDAC;
+
+   	tooltip.style.top = document.body.scrollTop + event.clientY -  Ytop;
+    tooltip.style.left = Xtop - tooltip.offsetWidth;
+   }
+
+/* var ePopup = window.createPopup()
+ function showHelpDAC3(Msg, Xtop, Ytop){
+
+	oBody	= ePopup.document.body;
+    var tabStyle = "style='padding-right:3px; padding-left:3px; font-size: 9pt; color: #58595b; line-height: 150%; font-family:굴림; height: 23px; background-color: #ffffff; text-align: left'";
+
+	var tooltip = document.all.HelpViewerDAC;
+
+    var buff = "<table border=0 cellpadding=2 cellspacing=1 bgcolor=#717171 height=20>";
+   	buff = buff + "<tr><td class=tb_left valign=middle height=20 bgcolor=lightyellow "+tabStyle+">";
+   	buff = buff + "&nbsp;"+Msg+"&nbsp;&nbsp;</td></tr>";
+   	buff = buff + "</table>";
+
+   	tooltip.innerHTML = buff;
+
+	oBody.innerHTML	= tooltip.innerHTML;
+
+    if (Xtop == 0)
+    {
+	  if(event.clientX>530) {
+			Xtop = document.body.scrollLeft + event.clientX - 265;
+		} else {
+			Xtop = document.body.scrollLeft + event.clientX + 15;
+		}
+    }
+
+    Ytop = document.body.scrollTop + event.clientY -  Ytop;
+
+   ePopup.show(Xtop, Ytop, tooltip.clientWidth+3, tooltip.clientHeight+2, document.body)
+}
+
+   function hideHelpDAC3() {
+   	ePopup.hide();
+   }
+
+*/
+//-정경욱끝--------------------------------------------------------------------------//
+
+
+
+////////////////////////////////////////////////////////////////////////////////
+// Create Popup 이용
+// L. J. I
+////////////////////////////////////////////////////////////////////////////////
+ /*     var biswrite = false;
+      var oPopup   = window.createPopup();
+      var oBody;
+      var oDiv;
+      var oTab;
+
+      // 테이블을 객체를 생성한다.
+      function creategDivTable() {
+
+         // DIV를 document에 append
+         oDiv=document.createElement("DIV");
+         document.body.appendChild(oDiv);
+
+         // table을 Div에 append
+         oTab=document.createElement("TABLE");
+      	oTab.id = "HelpViewerDAC";
+      	oTab.border=0;
+      	oTab.cellpadding=2;
+      	oTab.cellspacing=1;
+      	oTab.bgcolor="#717171";
+
+      	oDiv.appendChild(oTab);
+      }
+
+      // Help 메시지 cell을 넣는다.
+      function insertHelpMsg(Msg) {
+      	var oRow                   = oTab.insertRow()
+         var oCell                  = oTab.rows[0].insertCell();
+         oCell.vAlign               = "middle";
+         oCell.bgColor              = "lightyellow";
+         oCell.style.paddingRight   = "3px";
+         oCell.style.paddingLeft    = "3px";
+         oCell.style.fontSize       = "9pt";
+         oCell.style.color          = "#58595b";
+         oCell.style.lineHeight     = "150%";
+         oCell.style.fontFamily     = "굴림";
+         oCell.style.height         = "23px";
+         oCell.style.backgroundColor= "#ffffff";
+         oCell.style.textAlign      = "left";
+         oCell.innerHTML            = Msg;
+      }
+
+      // DIV 스타일을 셋팅한다.
+      function setDivStyle() {  */
+     	   /*
+     	   oDiv.style.width     =0;
+         oDiv.style.height    =0;
+         oDiv.style.position  ="absolute";
+         oDiv.style.left      =1;
+         oDiv.style.zIndex    =1;
+         oDiv.style.overflow  ="auto";
+         */
+/*         oDiv.style.visibility="hidden";
+      }
+
+      // 팝업 document style을 셋팅한다.
+      function setPopupDocumentStyle() {
+         oBody.backgroundColor ="transparent";
+      }
+
+      // document를 닫는다.
+      function hideHelpWindow() {
+      	oPopup.hide();
+      }
+
+
+      // 도움말 메인 함수
+      function showHelpWindow(Msg, wSize, hSize) {
+         // body를 만든다.
+         oBody = oPopup.document.body;
+
+         // 최초 DIV태그와 테이블 생성 - 한번만 생성한다.
+         if (biswrite == false) {
+            creategDivTable();
+            biswrite = true;
+         }
+      	// 도움말을 테이블에 담는다.
+      	insertHelpMsg(Msg);
+
+      	//alert(oTab.clientWidth + "/" +  oTab.clientHeight + "==>" + wSize + "/" + hSize);
+      	// 사이즈가 들어오면 사이즈데로 아니면 크기대로 한다.
+     	   //if (wSize==null) wSize = oTab.clientWidth  + 10;
+     	   //if (hSize==null) hSize = oTab.clientHeight + 10;
+
+     	   // 들어오는 사이즈와는 무관한게 셋팅한다.
+     	   wSize = oTab.clientWidth ;
+     	   hSize = oTab.clientHeight;
+
+     	   // DIV스타일을 셋팅한다. - DIV를 안보이게 한다.
+     	   setDivStyle();
+
+     	   // 팝업의 body에 Div를 넣는다.
+     	   oBody.innerHTML   = oDiv.innerHTML;
+
+     	   // 사이즈를 측정하고 popup창을 만들었으니 테이블네의 row를 삭제한다.
+     	   // 삭제하지 않으면 다음에 또 나온다.
+     	   oTab.deleteRow();
+
+     	   var y = event.clientY + 10;
+         var x = event.clientX - 20;
+
+         if (x+wSize>780 && event.clientX<780) x = 780 - wSize;               // 가로위치 보정
+         if ((document.body.offsetHeight+10) - y < hSize) y = y - (hSize+20); // 세로위치 보정
+
+         oPopup.show(x ,y, wSize, hSize, document.body);
+         setPopupDocumentStyle();
+
+      }
+
+*/
+////////////////////////////////////////////////////////////////////////////////
+// Create Popup 이용
+// L. J. I
+////////////////////////////////////////////////////////////////////////////////
+
+
+
+/*--
+  - Author:
+  - Date: 2004. 12. 21.
+  - Time: 오전 11:40:19
+  - Copyright 2004 pagemaker, Inc. All Rights Reserved.
+  - @(#)
+  - Description: 공통 JavaScript 라이브러리
+  - Revision:
+  --*/
+var	_checkNumValue   	= '0123456789.-';
+var	_checkNumValue1   	= '0123456789.';
+var	_checkDateValue   = '0123456789.-:/';
+var	_checkMoneyValue  = '0123456789-,';
+var dayOfMonth 				= new Array(31,28,31,30,31,30,31,31,30,31,30,31);
+
+n = (document.layers) ? 1:0;
+ie = (document.all) ? 1:0;
+if (n) document.captureEvents(Event.KEYPRESS);
+
+//-------------------------------------------------------------------
+// 브라우저의 버전을 체크하는 부분
+//-------------------------------------------------------------------
+	var NEYES = 0;
+
+	if((menufacture.indexOf('마이크로소프트') >= 0 || menufacture.indexOf('Microsoft') >= 0))
+	{
+		var str = version.split(';');
+		if(str[1] == 'MSIE 5.0')
+	        IEYES = 1;
+		else if(str[1] == 'MSIE 5.5')
+			IEYES = 2;
+		else if(str[1] == 'MSIE 6.0')
+			IEYES = 3;
+		else IEYES = 4;
+	}
+	else NEYES = 1;
+
+//-------------------------------------------------------------------
+// 브라우저 체크
+//-------------------------------------------------------------------
+function check_browser() {
+
+	var ret;
+	ret = navigator.appName;
+
+	if (ret == "Netscape")
+		return "NE";
+	else if (ret == "Microsoft Internet Explorer")
+		return "IE";
+	else
+		return -1;
+}
+
+//-------------------------------------------------------------------
+// 체크박스 전체를 선택하는 함수
+//-------------------------------------------------------------------
+// 화면의 스크립트에서 아래와 같이 사용한다.
+//
+// <A class="button" href="javascript:on_check(myForm,'check',2)">전체선택</A>
+//
+// 인자로 해당 화면의 폼 이름과 Rowcount가 필요하다
+//
+// 이 함수를 사용할 수 있기 위해서는 반드시 체크박스의 이름을 check+i로 사용하여야 한다.
+//-------------------------------------------------------------------
+function on_check(fname, cname, rowcnt)
+{
+	for(var i=0;i < parseInt(rowcnt,10);i++) {
+		fname[cname+i].checked = true;
+	}
+}
+
+//-------------------------------------------------------------------
+// 체크박스 전체를 해제하는 함수
+//-------------------------------------------------------------------
+// 화면의 스크립트에서 아래와 같이 사용한다.
+//
+// <A class="button" href="javascript:off_check(myForm,'check', 2)">전체해제</A>
+//
+// 인자로 해당 화면의 폼 이름과 Rowcount가 필요하다
+//
+// 이 함수를 사용할 수 있기 위해서는 반드시 체크박스의 이름을 check+i로 사용하여야 한다.
+//-------------------------------------------------------------------
+function off_check(fname, cname, rowcnt)
+{
+	for(var i=0;i < parseInt(rowcnt,10);i++) {
+		fname[cname+i].checked = false;
+	}
+}
+
+function on_check2(fname, name ,rowcnt) {
+    if (parseInt(rowcnt, 10) == 1) {
+    document.all[name].checked = true;
+    } else {
+    	for (var i=0 ; i < parseInt(rowcnt, 10) ; i++) {
+    		document.all[name][i].checked = true;
+    	}
+    }
+}
+
+function off_check2(fname, name ,rowcnt) {
+    if (parseInt(rowcnt, 10) == 1) {
+    document.all[name].checked = false;
+    } else {
+    	for (var i=0 ; i < parseInt(rowcnt, 10) ; i++) {
+    		document.all[name][i].checked = false;
+    	}
+    }
+}
+
+
+//-------------------------------------------------------------------
+// 영문 대문자인지를 체크하는 함수    // Arg로 받은 한 값이 조건에 맞는지 하나씩 체크해야 함.
+//-------------------------------------------------------------------
+function is_upper(value) {
+		var   i;
+		for(i=0;i<_upperValue.length;i++)
+				if(value == _upperValue.charAt(i)) {
+						return true;
+				}
+		return false;
+}
+//-------------------------------------------------------------------
+// 영문 소문자인지를 체크하는 함수   // Arg로 받은 한 값이 조건에 맞는지 하나씩 체크해야 함.
+//-------------------------------------------------------------------
+function is_lower(value) {
+		var   i;
+		for(i=0;i<_lowerValue.length;i++)
+				if(value == _lowerValue.charAt(i)) {
+						return true;
+				}
+		return false;
+}
+//-------------------------------------------------------------------
+// 특수문자인지를 체크하는 함수(영문이나 한글이 아닌)  // Arg로 받은 한 값이 조건에 맞는지 하나씩 체크해야 함.
+//-------------------------------------------------------------------
+function is_etc(value) {
+		var   j;
+		for(j=0;j<_etcValue.length;j++)
+				if(value == _etcValue.charAt(j)) {
+						return true;
+				}
+		return false;
+}
+//-------------------------------------------------------------------
+// 영문 대문자로 변환하는 함수  // Arg로 받은 한 값이 조건에 맞는지 하나씩 체크해야 함.
+//-------------------------------------------------------------------
+function to_upper(obj) {
+		var strNew ="", str = obj.value;
+		for( i=0 ; i<str.length; i++ )
+		{
+				if( str.charAt(i) >= 'a' && str.charAt(i) <= 'z' )
+						strNew = strNew + str.charAt(i).toUpperCase() ;
+				else
+						strNew = strNew + str.charAt(i);
+		}
+		obj.value = strNew;
+}
+//-------------------------------------------------------------------
+// 숫자인가를 체크하는 함수  // Arg로 받은 한 값이 조건에 맞는지 하나씩 체크해야 함.
+//-------------------------------------------------------------------
+function is_int(value) {
+		var   j;
+		for(j=0;j<_intValue.length;j++)
+				if(value == _intValue.charAt(j)) {
+						return true;
+				}
+		return false;
+}
+//-------------------------------------------------------------------
+// 금액을 체크할때 (음, 양의 정수만) 체크하는 함수  // Arg로 받은 한 값이 조건에 맞는지 하나씩 체크해야 함.
+//-------------------------------------------------------------------
+function is_money(value) {
+		var   j;
+		for(j=0;j<_checkMoneyValue.length;j++)
+				if(value == _checkMoneyValue.charAt(j)) {
+						return true;
+				}
+		return false;
+}
+//-------------------------------------------------------------------
+// 숫자값에서 -, 소숫점도 허용하게 하고 숫자열을 체크하는 함수    '.'  '-' 도 허용하게 수정함. 0425  // Arg로 받은 한 값이 조건에 맞는지 하나씩 체크해야 함.
+//-------------------------------------------------------------------
+function is_numeric(value) {
+		var   j;
+		for(j=0;j<_checkNumValue.length;j++)
+				if(value == _checkNumValue.charAt(j)) {
+						return true;
+				}
+		return false;
+}
+
+
+//-------------------------------------------------------------------
+// 숫자값에서  소숫점도 허용하게 하고 숫자열을 체크하는 함수    '.'  허용하게 수정함.
+//-------------------------------------------------------------------
+function is_numeric1(value) {
+		var   j;
+		for(j=0;j<_checkNumValue1.length;j++)
+				if(value == _checkNumValue1.charAt(j)) {
+						return true;
+				}
+		return false;
+}
+//-------------------------------------------------------------------
+// 날자에서 Dot 허용하게 하고 숫자열을 체크하는 함수    '.'  를 허용하게 수정함. 0427  // Arg로 받은 한 값이 조건에 맞는지 하나씩 체크해야 함.
+//-------------------------------------------------------------------
+function is_date_num(value) {
+		var   j;
+		for(j=0;j<_checkDateValue.length;j++)
+				if(value == _checkDateValue.charAt(j)) {
+						return true;
+				}
+		return false;
+}
+//-------------------------------------------------------------------
+// 전화번호를 구성할 만한 문자인가를 체크하는 함수  // Arg로 받은 한 값이 조건에 맞는지 하나씩 체크해야 함.
+//-------------------------------------------------------------------
+function is_tel_char(value) {  // 전화번호를 구성할 만한 문자인가?
+		var   j;
+		for(j=0;j<_intValue.length;j++){
+				if(value == _intValue.charAt(j) || value == '-'){
+						return true;
+				}
+		}
+		return false;
+}
+//-------------------------------------------------------------------
+// 지정된 객체의 문자열의 길이를 계산하는 부분
+//-------------------------------------------------------------------
+function check_byte(str)
+{
+	var byteLength= 0;
+	for(var inx=0; inx < str.length; inx++)
+	{
+		var oneChar = escape(str.charAt(inx));
+		if( oneChar.length == 1 )
+			byteLength ++;
+		else if(oneChar.indexOf("%u") != -1)
+			byteLength += 2;
+		else if(oneChar.indexOf("%") != -1)
+			byteLength += oneChar.length/3;
+	}
+	return byteLength;
+}
+//-------------------------------------------------------------------
+// 문자열의 길이에 따른 처리 함수
+//-------------------------------------------------------------------
+function check_length(obj, len, str)
+{
+		obj.value = ltrim(obj.value);
+		complen = check_byte(obj.value);
+		if ( complen > len)
+		{
+				alert(str + ' ' + len + 'Byte를 초과할수 없습니다. 현재 ' + complen + 'Byte입니다.');
+				obj.focus();
+				return false;
+		}
+		return true;
+}
+//-------------------------------------------------------------------
+// 문자열 좌측의 공백 제거 처리 함수
+//-------------------------------------------------------------------
+function ltrim(para)
+{
+		while(para.substring(0,1) == ' ')
+				para = para.substring(1, para.length);
+		return para;
+}
+//-------------------------------------------------------------------
+// 문자열 중간의 공백 제거 처리 함수
+//-------------------------------------------------------------------
+function mtrim(para)
+{
+		for ( i=0; i < para.length;)
+				if (para.substring(i,i+1) == ' ' )
+								para = para.substring(0,i) + para.substring(i+1,para.length);
+				else
+								i++;
+				return para;
+}
+//-------------------------------------------------------------------
+// 문자열 우측의 공백 제거 처리 함수
+//-------------------------------------------------------------------
+function rtrim(para)
+{
+		while(para.substring(para.length-1,para.length) == ' ')
+				para = para.substring(0, para.length-1);
+		return para;
+}
+
+//-------------------------------------------------------------------
+// Trim 처리
+//-------------------------------------------------------------------
+String.prototype.trim = function()
+{
+		return this.replace(/(^\s*)|(\s*$)/g, "");
+}
+
+//-------------------------------------------------------------------
+// 글자를 앞에서부터 원하는 바이트만큼 잘라 리턴합니다
+//-------------------------------------------------------------------
+ String.prototype.cut = function(len) {
+	var str = this;
+	var l = 0;
+	for (var i=0; i<str.length; i++) {
+	 l += (str.charCodeAt(i) > 128) ? 2 : 1;
+	 if (l > len) return str.substring(0,i) + "...";
+	}
+	return str;
+ }
+
+//-------------------------------------------------------------------
+// 해당스트링의 바이트단위 길이를 리턴합니다. (기존의 length 속성은 2바이트 문자를 한글자로 간주합니다)
+//-------------------------------------------------------------------
+ String.prototype.bytes = function() {
+	var str = this;
+	var l = 0;
+	for (var i=0; i<str.length; i++) l += (str.charCodeAt(i) > 128) ? 2 : 1;
+	return l;
+ }
+
+//-------------------------------------------------------------------
+// 길이 체크
+//-------------------------------------------------------------------
+function len_chk( val, len) {
+	if ( val.bytes() > len ) {
+		alert(len+"bytes 이상 입력하실 수 없습니다.\n내용을 줄이시기 바랍니다.");
+	}
+}
+
+//-------------------------------------------------------------------
+// URL 체크 http:// 입력불가
+//-------------------------------------------------------------------
+function url_chk( obj ) {
+	var val = obj.value ;
+	if ( val.length > 7 ) {
+		if ( val.substring(0,7).toLowerCase() == "http://" )  {
+			alert("http://은 입력하실수 없습니다.") ;
+			obj.value = val.substring(7) ;
+		}
+	}
+}
+
+//-------------------------------------------------------------------
+// 입력된 문자가 금액인가를 체크하는 함수 ( '-' 와 숫자만 허용한다)
+//-------------------------------------------------------------------
+function check_money(obj)
+{
+		var i,j;
+		var str = new String(obj.value);
+
+		if ((str == '')||(str.length == 0))
+				return true;
+
+		for(i=0;i<str.length;i++)
+		{
+				if(!is_money(str.charAt(i)) || str.charAt(i)=="," )
+				{
+						alert('숫자만 입력가능합니다.');
+						obj.focus();
+						return false;
+				}
+		}
+		return true;
+}
+//-------------------------------------------------------------------
+// 숫자로 구성된 문자열인가를 체크하는 함수 (마이너스, 콤마, Dot 모두 허용)
+//-------------------------------------------------------------------
+function check_digit(obj)
+{
+		var    i;
+		var    str =  new String(del_comma(obj));
+		for(i=0;i<str.length;i++)
+				if(!is_numeric(str.charAt(i)))           // 0425, is_digit() 로 된것을 수정.
+				{
+						alert("숫자와 '.'만 입력가능합니다.");
+						obj.value = "";
+						obj.focus();
+						return false;
+				}
+		return true;
+}
+
+
+//-------------------------------------------------------------------
+// 숫자로 구성된 문자열인가를 체크하는 함수 (마이너스, 콤마, Dot 모두 허용)
+//-------------------------------------------------------------------
+function check_digit2(obj)
+{
+		var    i;
+		var    str =  new String(del_comma(obj));
+		for(i=0;i<str.length;i++)
+				if(!is_numeric1(str.charAt(i)))           // 0425, is_digit() 로 된것을 수정.
+				{
+						alert("숫자와 '.'만 입력가능합니다.");
+						obj.value = "";
+						obj.focus();
+						return false;
+				}
+		return true;
+}
+
+//-------------------------------------------------------------------
+// 숫자로 구성된 문자열인가를 체크하는 함수
+//-------------------------------------------------------------------
+function is_digit(obj)
+{
+		var    i;
+		var    str =  new String(obj.value);
+		for(i=0;i<str.length;i++)
+				if(!is_int(str.charAt(i)))
+				{
+						//alert('숫자만 입력가능합니다.');
+						obj.value = "";
+						obj.focus();
+						return false;
+				}
+		return true;
+}
+//-------------------------------------------------------------------
+// 입력된 문자가 실수인가를 체크하는 함수
+//-------------------------------------------------------------------
+function check_num(obj)
+{
+		var i,j;
+		var str = new String(obj.value);
+
+		if ((str == '')||(str.length == 0))
+				return true;
+
+		for(i=0;i<str.length;i++)
+		{
+				if(!is_int(str.charAt(i)))
+			if(str.charAt(i)!='.' && str.charAt(i)!='-')
+				{
+						alert('실수만 입력가능합니다.');
+						obj.focus();
+						return false;
+				}
+		}
+		return true;
+}
+//-------------------------------------------------------------------
+// 입력된 문자가 숫자, 분수(1/3,2/5..)인가를 체크하는 함수
+//-------------------------------------------------------------------
+function check_fraction(obj)
+{
+		var i,j;
+		var str = new String(obj.value);
+		var check_slash = 0;
+
+		if ((str == '')||(str.length == 0))
+				return true;
+
+		for(i=0;i< str.length;i++)
+		{
+				if(!is_int(str.charAt(i)))
+				{
+			if( str.charAt(i) !='/' )
+						{
+								alert('정수 또는 분수만 입력가능합니다.');
+								obj.focus();
+								return false;
+						} else {
+							 check_slash++;
+							 if (i==0) {
+											 alert('정수 또는 분수만 입력가능합니다.');
+											 obj.focus();
+											 return false;
+							 }
+						}
+				}
+		}
+		j = i -1;
+
+		if (str.charAt(j) == '/' || check_slash > 1) {
+				alert('정수 또는 분수만 입력가능합니다.');
+				obj.focus();
+				return false;
+		}
+		return true;
+}
+//-------------------------------------------------------------------
+//  전화번호인지를 체크하는 함수
+//-------------------------------------------------------------------
+function is_tel(tel) {
+		var    i;
+		for(i=0;i<tel.length;i++)
+				if(!is_tel_char(tel.charAt(i)))
+						return false;
+		return true;
+}
+//-------------------------------------------------------------------
+// 전화번호 체크에서 객체를 매개변수로 받음
+//-------------------------------------------------------------------
+function is_tel2(obj) {
+		var    i;
+		var    tel = ltrim(obj.value);
+		if( tel == '' ) return true;
+
+		for(i=0;i<tel.length;i++)
+				if(!is_tel_char(tel.charAt(i)))
+				{
+						alert('전화번호가 잘못되었습니다.');
+						obj.focus();
+						return false;
+				}
+		return true;
+}
+//-------------------------------------------------------------------
+// Input에 내용이 없으면  false를 return함.
+//-------------------------------------------------------------------
+function is_not_null(obj, str)
+{
+		obj.value = ltrim(obj.value);
+		if (obj.value == '')
+		{
+				alert( str + ' 입력하세요.');
+				obj.focus();
+				return false;
+		}else
+				return true;
+}
+//-------------------------------------------------------------------
+// 해당 년월의 마지막 날짜 구하는 함수
+//-------------------------------------------------------------------
+function lastday(calyear,calmonth)
+{
+		if (((calyear %4 == 0) && (calyear % 100 != 0))||(calyear % 400 == 0))
+				dayOfMonth[1] = 29;
+		else
+				dayOfMonth[1] = 28;
+		var nDays = dayOfMonth[calmonth-1];
+		return nDays;
+}
+
+//-------------------------------------------------------------------
+// 날자형식의 숫자열인지를 체크하는 함수
+//-------------------------------------------------------------------
+function check_date_digit(obj)
+{
+		var    i;
+		var    str =  new String(del_dot(obj));
+		for(i=0;i<str.length;i++)
+				if(!is_int(str.charAt(i)))
+				{
+						obj.focus();
+						return false;
+				}
+		return true;
+}
+//-------------------------------------------------------------------
+// 날짜의 정확성 검사
+//-------------------------------------------------------------------
+function is_valid_date(obj)
+{
+		var t_date = new String(del_dot(obj));
+		var t_year  = parseInt(t_date.substring(0,4),10);
+		var t_month = parseInt(t_date.substring(4,6),10);
+		var t_day   = parseInt(t_date.substring(6,8),10);
+		if(obj.value.length == 0){
+				obj.focus();
+				return false;
+		}
+		if (check_date_digit(obj) == false){
+				alert('날짜는 형식이 틀렸습니다.\n\nYYYYMMDD 형식으로 입력해 주십시오!!');
+				obj.value='';
+				obj.focus();
+				return false;
+		}
+		if (t_date.length != 8){
+				alert('날짜의 입력이 틀렸습니다.\n\nYYYYMMDD 형식으로 입력해 주십시오!!');
+				obj.focus();
+				return false;
+		}
+		if (t_year < 1900 || t_year >2999){
+				alert('날짜가 잘못 입력되었습니다. 년도는 1900년에서 2999년까지 입니다.');
+				obj.focus();
+				return false;
+		}
+		if (t_month <1 || t_month > 12){
+				alert('날짜가 잘못 입력되었습니다. 달은 1월에서 12월까지 입니다.');
+				obj.focus();
+				return false;
+		}
+		if (t_day <1 || t_day > lastday(t_year, t_month)){
+				alert('날짜가 잘못 입력되었습니다.'+t_month+'월에는 '+t_day+'일이 없습니다.');
+				obj.focus();
+				return false;
+		}
+		return true;
+}
+//-------------------------------------------------------------------
+// 두 날짜 사이의 관계는 올바르게 정립되어 있는가 ?
+// 날짜의 세팅이 Text로만 이루어져 있는 경우
+//-------------------------------------------------------------------
+function is_valid_date_with(s_date, e_date)
+{
+	var t_s_date = parseInt(parseFloat(del_dot(s_date), 10), 10);
+	var t_e_date = parseFloat(parseFloat(del_dot(e_date), 10), 10);
+
+	if (is_valid_date(s_date) == false)
+	{
+		s_date.focus();
+		return false;
+	}
+	if (is_valid_date(e_date) == false)
+	{
+		e_date.focus();
+		return false;
+	}
+
+	if (t_s_date > t_e_date)
+	{
+		alert('시작일이 종료일보다 큽니다.');
+		e_date.focus();
+		return false;
+	}
+	return true;
+}
+//-------------------------------------------------------------------
+// radio button이 선택되었는가 ?
+//-------------------------------------------------------------------
+function check_radio_button(obj, cnt, str)
+{
+		var result = false;
+		if (cnt == 1)
+		{
+				if (obj.checked == true)
+						return true;
+				else
+				{
+						alert( str + '지정하세요!');
+						return false;
+				}
+		}
+		else
+		{
+				for (i = 0; i < cnt; i++)
+				{
+						if (obj[i].checked == true)
+								result = true;
+				}
+				if (result != true)
+				{
+						alert( str + '지정하세요!');
+						return false;
+				}
+		}
+		return true;
+}
+//-------------------------------------------------------------------
+// 오늘날짜를 yyyymmdd형태로 리턴하는 함수
+//-------------------------------------------------------------------
+function to_day() {
+
+		var now = new Date();
+		var yr = now.getYear();
+		var mName = now.getMonth() + 1;
+		var dName = now.getDate();
+
+		if (yr < 100)
+				year=("19"+yr).toString();
+		else
+				year=yr.toString();
+
+		if (mName <10)
+				month=("0"+mName).toString();
+		else
+				month=mName.toString();
+
+		if (dName <10)
+				day=("0"+dName).toString();
+		else
+				day=dName.toString();
+
+		return year+month+day;
+
+}
+
+// IE에서의 encoding문제를 해결하기 위한 함수.
+function str_encoding(str) {
+	var ret = '';
+	var c = '';
+	var temp = '';
+
+	if (check_browser() != 'IE') return str;
+
+	for(i=0; i<str.length; i++) {
+		 temp = str.charCodeAt(i);
+		 if ( temp>122 || temp == 32)
+		c = escape(str.charAt(i));
+		 else
+		c = str.charAt(i);
+		 ret = ret + c;
+	}
+
+	return ret;
+}
+
+//교과목검색, 체중, 키 입력타입 체크('숫자' 와 ' . '만  허용)
+
+function check_digit1(myform, myinput, mymsg)
+{
+	var str;
+	str = mymsg;
+	with (myform) {
+		if (!check_digit_body1(myinput)) {
+			if (str.length == 0)
+				alert("숫자형식으로 입력하세요.");
+			else
+				alert(str);
+			myinput.focus();
+			myinput.select();
+			return false;
+		}
+		else
+		return true;
+	}
+}
+
+function check_digit_body1(ctl_digit)
+{
+
+		var str=ctl_digit.value;
+
+		if (str.length == 0)
+		return false;
+
+		// Checks that characters are numbers or hyphens.
+		for (var i = 0; i < str.length; i++)
+		{
+		var ch = str.substring(i, i + 1);
+		if ((ch < "0" || "9" < ch)){
+			if (ch != ".")
+				 return false;
+		}
+		}
+		return true;
+}
+
+function check_key_in(myform, myinput, mymsg)
+{
+	var str;
+	str = mymsg;
+
+	with (myform) {
+		if (myinput.value == '') {
+			if (str.length == 0)
+				alert("입력하지 않으셨습니다.");
+			else
+				alert(str);
+			myinput.focus();
+			myinput.select();
+			return false;
+		}
+		return true;
+
+	}
+}
+
+function check_date(myform, myinput, mymsg)
+{
+	var str;
+	str = mymsg;
+	with (myform) {
+		if (!check_date_body(myinput, ".")) {
+			if (str.length == 0)
+				alert("Date형식으로 입력하세요.");
+			else
+				alert(str);
+			myinput.focus();
+			myinput.select();
+			return false;
+		}
+		return true;
+	}
+}
+
+function check_digit_form(myform, myinput, mymsg)
+{
+	var str;
+	str = mymsg;
+	with (myform) {
+		if (!check_digit_body(myinput)) {
+			if (str.length == 0)
+				alert("숫자형식으로 입력하세요.");
+			else
+				alert(str);
+			myinput.focus();
+			myinput.select();
+			return false;
+		}
+		return true;
+	}
+}
+
+function check_date_body(ctl_date, sep)
+{
+
+		var str=ctl_date.value;
+		if (str.length == 0)
+		return false;
+
+		// Check for  10 characters in string.
+		if (str.length != 10)
+	return false;
+
+		// Checks that characters are numbers or hyphens.
+		for (var i = 0; i < str.length; i++)
+		{
+	var ch = str.substring(i, i + 1);
+	if ((i==4)||(i==7)) {
+		if (ch != ".") return false;
+		} else {
+		if ((ch < "0")||(ch > "9")) return false;
+	}
+		}
+		// Check out year value.
+		if ( (str.substring(0, 4) < 1)  ||  (str.substring(0, 4) > 9999)  )
+		return false;
+
+		// Check out month value.
+		if ( (str.substring(5, 7) < 1)  ||  (str.substring(5, 7) > 12)  )
+		return false;
+
+		// Check out day value.
+		if ( (str.substring(8, 10) < 1)  ||  (str.substring(8, 10) > 31)  )
+		return false;
+
+		// Check out day value per each month value.
+		// Febuary
+		if ( (str.substring(5, 7) == 2 )  &&  (str.substring(8, 10) > 29)  )
+		return false;
+
+		// April
+		if ( (str.substring(5, 7) == 4 )  &&  (str.substring(8, 10) > 30)  )
+		return false;
+
+		// June
+		if ( (str.substring(5, 7) == 6 )  &&  (str.substring(8, 10) > 30)  )
+		return false;
+
+		// September
+		if ( (str.substring(5, 7) == 9 )  &&  (str.substring(8, 10) > 30)  )
+		return false;
+
+		// November
+		if ( (str.substring(5, 7) == 11 )  &&  (str.substring(8, 10) > 30)  )
+		return false;
+
+		new_str = str.substring(0, 4) + sep + str.substring(5, 7) + sep + str.substring(8, 10);
+
+		ctl_date.value = new_str;
+
+		return true;
+}
+
+function check_digit_body(ctl_digit)
+{
+		var str=ctl_digit.value;
+
+		if (str.length == 0)
+		return false;
+
+		// Checks that characters are numbers or hyphens.
+		for (var i = 0; i < str.length; i++)
+		{
+		var ch = str.substring(i, i + 1);
+		if ((ch < "0" || "9" < ch) )
+				return false;
+		}
+
+		return true;
+}
+
+
+function check_english(myform, myinput, mymsg)
+{
+	var str;
+	str = mymsg;
+	with (myform) {
+		if (!check_english_body(myinput)) {
+			if (str.length == 0)
+				alert("알파벳, space, '-', ','만 입력할 수 있습니다.");
+			else
+				alert(str);
+			myinput.focus();
+			myinput.select();
+			return false;
+		}
+		else
+		return true;
+	}
+}
+
+//-------------------------------------------------------------------
+// 영문인지를 검사한다
+//-------------------------------------------------------------------
+function check_english_body(ctl_digit)
+{
+
+		var str=ctl_digit.value;
+
+		if (str.length == 0)
+		return false;
+
+		// Checks that characters are numbers or hyphens.
+		for (var i = 0; i < str.length; i++)
+		{
+		var ch = str.substring(i, i + 1);
+								if(ch != "-") {
+		if ((ch < "A" || "z" < ch )){
+				 if (ch == " ")
+				 ;
+										 else if (ch == ",")
+				 ;
+										 else
+				 return false;
+		}
+								}
+		}
+		return true;
+}
+
+function get_str_len(arg_str){
+	 var j = 0;
+	 var tempStr;
+	 var tempStr2;
+
+	 for(var i = 0; i < arg_str.length; i++  ) {
+				 tempStr = arg_str.charCodeAt(i);
+				 tempStr2 = tempStr.toString();
+
+				 if(tempStr2.length >= 5){
+						j++;
+				 }
+	 }
+	 return i+j;
+}
+
+function str_trim( arg_str )
+{
+	var rtn_str = "";
+	var i=0;
+	while( arg_str.charAt(i) != "" ) {
+		if( arg_str.charAt(i)!=' ') {
+			rtn_str += arg_str.charAt(i);
+		}
+		i++;
+	}
+	return rtn_str;
+}
+
+function check_float(obj)
+{
+		var    _floatValue   = '0123456789.-';
+		var str = new String(obj.value);
+
+		if ((str == '')||(obj.value.length == 0))
+				return true;
+		for( var j = 0; j < obj.value.length; j++)
+		{
+				var char_ok = false;
+				for(var i = 0; i < _floatValue.length; i++)
+						if(str.charAt(j) == _floatValue.charAt(i) ) {
+								char_ok = true;
+								break;
+						}
+				if ( char_ok == false )
+						return false;
+		}
+		return true;
+}
+
+//-------------------------------------------------------------------
+// 사업자 등록번호를 체크하는 함수
+//-------------------------------------------------------------------
+function is_bizno(obj){
+	var as_Biz_no =  String(obj.value);
+	var isNum = true;
+	var I_TEMP_SUM = 0 ;
+	var I_TEMP = 0;
+	var S_TEMP;
+	var I_CHK_DIGIT = 0;
+
+	as_Biz_no = remove_hyphen(as_Biz_no);
+
+	I_TEMP_SUM = I_TEMP_SUM + parseInt(as_Biz_no.substring(0,1),10)     ;
+	I_TEMP_SUM = I_TEMP_SUM + parseInt(as_Biz_no.substring(1,2),10) * 3 ;
+	I_TEMP_SUM = I_TEMP_SUM + parseInt(as_Biz_no.substring(2,3),10) * 7 ;
+	I_TEMP_SUM = I_TEMP_SUM + parseInt(as_Biz_no.substring(3,4),10)     ;
+	I_TEMP_SUM = I_TEMP_SUM + parseInt(as_Biz_no.substring(4,5),10) * 3 ;
+	I_TEMP_SUM = I_TEMP_SUM + parseInt(as_Biz_no.substring(5,6),10) * 7 ;
+	I_TEMP_SUM = I_TEMP_SUM + parseInt(as_Biz_no.substring(6,7),10)     ;
+	I_TEMP_SUM = I_TEMP_SUM + parseInt(as_Biz_no.substring(7,8),10) * 3 ;
+	I_TEMP  				= parseInt(as_Biz_no.substring(8,9),10)*5,'00';
+	if (I_TEMP < 10)
+		S_TEMP = '0' + String(I_TEMP);
+	else
+		S_TEMP = String(I_TEMP);
+
+	I_TEMP_SUM = I_TEMP_SUM + parseInt(S_TEMP.substring(0,1)) + parseInt(S_TEMP.substring(1,2)) ;
+	I_CHK_DIGIT= (10-(I_TEMP_SUM%10))%10 ;
+	if (as_Biz_no.substring(9,10) != String(I_CHK_DIGIT)) return false;
+	return true ;
+}
+
+//-------------------------------------------------------------------
+// 주민등록 번호를 체크하는 함수
+//-------------------------------------------------------------------
+function is_resno(obj){
+	var str =  String(obj.value);
+	var reg_no = String(obj.value);
+	var str2 = '';
+	var isNum = true;
+	var ll_resno = 0 ;
+	var ll_temp = 0 ;
+
+	if ( parseInt(str.substring(6,7),10) == 1 || parseInt(str.substring(6,7),10) == 2 )
+		str2 = str2 + "19";
+	else
+		str2 = str2 + "20";
+
+	str2 = str2 + str.substring(0,6);
+
+		var t_year  = parseInt(str2.substring(0,4),10);
+		var t_month = parseInt(str2.substring(4,6),10);
+		var t_day   = parseInt(str2.substring(6,8),10);
+
+		if (t_year < 1900 || t_year >2999)
+				return false;
+
+		if (t_month <1 || t_month > 12)
+				return false;
+
+	if (t_day <1 || t_day > lastday(t_year, t_month))
+				return false;
+
+
+	ll_resno = ll_resno + parseInt(str.substring(0,1),10) * 9 ;
+	ll_resno = ll_resno + parseInt(str.substring(1,2),10) * 8 ;
+	ll_resno = ll_resno + parseInt(str.substring(2,3),10) * 7 ;
+	ll_resno = ll_resno + parseInt(str.substring(3,4),10) * 6 ;
+	ll_resno = ll_resno + parseInt(str.substring(4,5),10) * 5 ;
+	ll_resno = ll_resno + parseInt(str.substring(5,6),10) * 4 ;
+	ll_resno = ll_resno + parseInt(str.substring(6,7),10) * 3 ;
+	ll_resno = ll_resno + parseInt(str.substring(7,8),10) * 2 ;
+	ll_resno = ll_resno + parseInt(str.substring(8,9),10) * 9 ;
+	ll_resno = ll_resno + parseInt(str.substring(9,10),10) * 8 ;
+	ll_resno = ll_resno + parseInt(str.substring(10,11),10) * 7 ;
+	ll_resno = ll_resno + parseInt(str.substring(11,12),10) * 6 ;
+	ll_temp = ll_resno % 11 ;
+	if (ll_temp == 0 ) ll_temp = 1 ;
+	if (ll_temp == 10 ) ll_temp = 0;
+	if (ll_temp != parseInt(str.substring(12,13),10)) {
+		//외국인인지 체크하는 함수 호출
+		fgn_no_chksum(reg_no);
+	} else {
+		return true ;
+	}
+}
+
+//-------------------------------------------------------------------
+// 외국인인지 체크하는 함수
+//-------------------------------------------------------------------
+function fgn_no_chksum(reg_no) {
+		var sum = 0;
+		var odd = 0;
+
+		buf = new Array(13);
+		for (i = 0; i < 13; i++) buf[i] = parseInt(reg_no.charAt(i));
+
+		odd = buf[7]*10 + buf[8];
+
+		if (odd%2 != 0) {
+			return false;
+		}
+
+		if ((buf[11] != 6)&&(buf[11] != 7)&&(buf[11] != 8)&&(buf[11] != 9)) {
+			return false;
+		}
+
+		multipliers = [2,3,4,5,6,7,8,9,2,3,4,5];
+		for (i = 0, sum = 0; i < 12; i++) sum += (buf[i] *= multipliers[i]);
+
+
+		sum=11-(sum%11);
+
+		if (sum>=10) sum-=10;
+
+		sum += 2;
+
+		if (sum>=10) sum-=10;
+
+		if ( sum != buf[12]) {
+				return false;
+		}
+		else {
+				return true;
+		}
+}
+
+//-------------------------------------------------------------------
+// 입력값에 있는 Hyphen('-')을 제거하는 함수.
+//-------------------------------------------------------------------
+function remove_hyphen(str)
+{
+	var sTmp = "";
+	var sBuffer = "";
+	var i = 0;
+
+	for (i=0; i < str.length; i++)
+	{
+		sTmp = str.substring(i, i+1);
+		if (sTmp != "-")
+			sBuffer += sTmp;
+	}
+	return sBuffer;
+}
+
+//-------------------------------------------------------------------
+// PopUp Window Open 함수.
+//-------------------------------------------------------------------
+function PopUpWindowOpenPrt(surl, popupwidth, popupheight)
+{
+	if( popupwidth  > window.screen.width )
+		popupwidth = window.screen.width;
+	if( popupheight > window.screen.height )
+		popupheight = window.screen.height;
+
+	if( isNaN(parseInt(popupwidth)) ){
+		Top  = (window.screen.availHeight - 600) / 2;
+		Left = (window.screen.availWidth  - 800) / 2;
+	} else {
+		Top  = (window.screen.availHeight - popupheight)  / 2;
+		Left = (window.screen.availWidth  - popupwidth) / 2;
+	}
+
+	if (Top < 0) Top = 0;
+	if (Left < 0) Left = 0;
+	Future = "fullscreen=no,toolbar=no,location=no,directories=no,status=no,menubar=no,scrollbars=yes,resizable=no,left=" + Left + ",top=" + Top + ",width=" + popupwidth + ",height=" + popupheight;
+
+	PopUpWindow = window.open("/BSC/common/blank.html", "PopUpWindow" , Future)
+	PopUpWindow.location = (surl!="") ? surl : "/BSC/common/blank.html";
+	PopUpWindow.resizeTo(parseInt(popupwidth)+10, parseInt(popupheight)+29);
+	PopUpWindow.focus();
+
+}
+
+
+//-------------------------------------------------------------------
+// PopUp Window Open 함수.
+//-------------------------------------------------------------------
+function PopUpWindowOpen(surl, popupwidth, popupheight)
+{
+	if( popupwidth  > window.screen.width )
+		popupwidth = window.screen.width;
+	if( popupheight > window.screen.height )
+		popupheight = window.screen.height;
+
+	if( isNaN(parseInt(popupwidth)) ){
+		Top  = (window.screen.availHeight - 600) / 2;
+		Left = (window.screen.availWidth  - 800) / 2;
+	} else {
+		Top  = (window.screen.availHeight - popupheight)  / 2;
+		Left = (window.screen.availWidth  - popupwidth) / 2;
+	}
+
+	if (Top < 0) Top = 0;
+	if (Left < 0) Left = 0;
+	Future = "fullscreen=no,toolbar=no,location=no,directories=no,status=no,menubar=no,scrollbars=no,resizable=no,left=" + Left + ",top=" + Top + ",width=" + popupwidth + ",height=" + popupheight;
+
+	PopUpWindow = window.open("/BSC/common/blank.html", "PopUpWindow" , Future)
+	PopUpWindow.location = (surl!="") ? surl : "/BSC/common/blank.html";
+	PopUpWindow.resizeTo(parseInt(popupwidth)+10, parseInt(popupheight)+29);
+	PopUpWindow.focus();
+
+}
+
+//-------------------------------------------------------------------
+// PopUp Window Open 함수2.( 이미 PopUp된 Window에서 다시 PopUp window를 Open할때 사용)
+//-------------------------------------------------------------------
+function PopUpWindowOpen2(surl, popupwidth, popupheight)
+{
+	if( popupwidth  > window.screen.width )
+		popupwidth = window.screen.width;
+	if( popupheight > window.screen.height )
+		popupheight = window.screen.height;
+
+	if( isNaN(parseInt(popupwidth)) ){
+		Top  = (window.screen.availHeight - 600) / 2;
+		Left = (window.screen.availWidth  - 800) / 2;
+	} else {
+		Top  = (window.screen.availHeight - popupheight)  / 2;
+		Left = (window.screen.availWidth  - popupwidth) / 2;
+	}
+
+	if (Top < 0) Top = 0;
+	if (Left < 0) Left = 0;
+	Future = "fullscreen=no,toolbar=no,location=no,directories=no,status=no,menubar=no,scrollbars=no,resizable=no,left=" + Left + ",top=" + Top + ",width=" + popupwidth + ",height=" + popupheight;
+
+	PopUpWindow2 = window.open("/BSC/common/blank.html", "PopUpWindow2" , Future)
+	PopUpWindow2.location = (surl!="") ? surl : "/BSC/common/blank.html";
+	PopUpWindow2.resizeTo(parseInt(popupwidth)+10, parseInt(popupheight)+29);
+	PopUpWindow2.focus();
+}
+
+
+//-------------------------------------------------------------------
+// PopUp Window Open 함수2.( 이미 PopUp된 Window에서 다시 PopUp window를 Open할때 사용)
+//-------------------------------------------------------------------
+function PopUpWindowOpen2WithScroll(surl, popupwidth, popupheight)
+{
+	if( popupwidth  > window.screen.width )
+		popupwidth = window.screen.width;
+	if( popupheight > window.screen.height )
+		popupheight = window.screen.height;
+
+	if( isNaN(parseInt(popupwidth)) ){
+		Top  = (window.screen.availHeight - 600) / 2;
+		Left = (window.screen.availWidth  - 800) / 2;
+	} else {
+		Top  = (window.screen.availHeight - popupheight)  / 2;
+		Left = (window.screen.availWidth  - popupwidth) / 2;
+	}
+
+	if (Top < 0) Top = 0;
+	if (Left < 0) Left = 0;
+	Future = "fullscreen=no,toolbar=no,location=no,directories=no,status=no,menubar=no,scrollbars=yes,resizable=no,left=" + Left + ",top=" + Top + ",width=" + popupwidth + ",height=" + popupheight;
+
+	PopUpWindow2 = window.open("/BSC/common/blank.html", "PopUpWindow2" , Future)
+	PopUpWindow2.location = (surl!="") ? surl : "/BSC/common/blank.html";
+	PopUpWindow2.resizeTo(parseInt(popupwidth)+10, parseInt(popupheight)+29);
+	PopUpWindow2.focus();
+}
+
+//-------------------------------------------------------------------
+// PopUp Window Open 함수 - Window 명까지 파라미터로 받음
+//-------------------------------------------------------------------
+function PopUpWindowOpenWithName(surl, popupwidth, popupheight, winName)
+{
+	if( popupwidth  > window.screen.width )
+		popupwidth = window.screen.width;
+	if( popupheight > window.screen.height )
+		popupheight = window.screen.height;
+
+	if( isNaN(parseInt(popupwidth)) ){
+		Top  = (window.screen.availHeight - 600) / 2;
+		Left = (window.screen.availWidth  - 800) / 2;
+	} else {
+		Top  = (window.screen.availHeight - popupheight)  / 2;
+		Left = (window.screen.availWidth  - popupwidth) / 2;
+	}
+
+	if (Top < 0) Top = 0;
+	if (Left < 0) Left = 0;
+	Future = "fullscreen=no,toolbar=no,location=no,directories=no,status=no,menubar=no,scrollbars=no,resizable=no,left=" + Left + ",top=" + Top + ",width=" + popupwidth + ",height=" + popupheight;
+
+	popup_window = window.open("/BSC/common/blank.html", winName , Future)
+	popup_window.location = (surl!="") ? surl : "/BSC/common/blank.html";
+	popup_window.resizeTo(parseInt(popupwidth)+10, parseInt(popupheight)+29);
+	popup_window.focus();
+}
+
+
+//-------------------------------------------------------------------
+// PopUp Window Open 함수 스크롤바있는.
+//-------------------------------------------------------------------
+function PopUpWindowOpenWithScroll(surl, popupwidth, popupheight)
+{
+	if( popupwidth  > window.screen.width )
+		popupwidth = window.screen.width;
+	if( popupheight > window.screen.height )
+		popupheight = window.screen.height;
+
+	if( isNaN(parseInt(popupwidth)) ){
+		Top  = (window.screen.availHeight - 600) / 2;
+		Left = (window.screen.availWidth  - 800) / 2;
+	} else {
+		Top  = (window.screen.availHeight - popupheight)  / 2;
+		Left = (window.screen.availWidth  - popupwidth) / 2;
+	}
+
+	if (Top < 0) Top = 0;
+	if (Left < 0) Left = 0;
+	Future = "fullscreen=no,toolbar=no,location=no,directories=no,status=no,menubar=no,scrollbars=yes,resizable=no,left=" + Left + ",top=" + Top + ",width=" + popupwidth + ",height=" + popupheight;
+
+	PopUpWindow = window.open("/BSC/common/blank.html", "PopUpWindow" , Future)
+	PopUpWindow.location = (surl!="") ? surl : "/BSC/common/blank.html";
+	PopUpWindow.resizeTo(parseInt(popupwidth)+10, parseInt(popupheight)+29);
+	PopUpWindow.focus();
+
+}
+
+
+//--------------------------------------------------------------------------------------------------
+// 년도의 정확성 검사(YYYY형식)
+//--------------------------------------------------------------------------------------------------
+function is_valid_year(value) {
+		var t_year  = char_trim(value);
+
+		if (t_year.length == 4) {
+				if (t_year < 1900 || t_year > 2999) {
+						 return false;
+				} else {
+						return true;
+				}
+		}
+		return false;
+}
+
+//--------------------------------------------------------------------------------------------------
+// 숫자열의 문자를 제거하는 함수
+//--------------------------------------------------------------------------------------------------
+function char_trim(value) {
+	var strNew = "";
+		var chkstr = "0123456789";
+		for (var i = 0; i < value.length; i++) {
+				if (chkstr.indexOf(value.substring(i, i + 1)) >= 0) {
+						strNew += value.substring(i, i + 1);
+				}
+		}
+		return strNew;
+}
+
+//--------------------------------------------------------------------------------------------------
+// 자릿수를 체크하여 커서 이동
+//--------------------------------------------------------------------------------------------------
+function move_element(value,fname,num)
+{
+	if(value.length == 4 && num == 4){
+		 fname.focus();
+	}
+	else if(value.length == 2 && num == 2){
+		 fname.focus();
+	}
+	else if(value.length == 3 && num == 3){
+		 fname.focus();
+	}
+	else if(value.length == 5 && num == 5){
+		 fname.focus();
+	}
+
+	else if(value.length == 6 && num == 6){
+		 fname.focus();
+	}
+	 else if(value.length == 7 && num == 7){
+		 fname.focus();
+	}
+	 else if(value.length == 8 && num == 8){
+		 fname.focus();
+	}
+	 else if(value.length == 9 && num == 9){
+		 fname.focus();
+	}
+}
+
+//--------------------------------------------------------------------------------------------------
+// 금액을 나타내는 숫자열에 3자리 단위로 ','를 삽입하는 함수
+//--------------------------------------------------------------------------------------------------
+function add_comma(obj) {
+	var str =  String(obj.value);
+		var x = 0;
+		if (str.length < 1) {
+				return "";
+		} else {
+				var tm = "";
+				var ck = "";
+				if (str.substring(0, 1) == "-") {
+						tm = str.substring(1, str.length);
+						ck = "Y";
+				} else {
+						tm = str;
+						ck = "N";
+				}
+				var st = "";
+				var cm = ",";
+				for (var i = tm.length, j = 0; i > 0; i--, j++) {
+						if ((j % 3) == 2) {
+								if (tm.length == j + 1) st = tm.substring(i - 1, i) + st;
+								else st = cm + tm.substring(i - 1, i) + st;
+						} else {
+								st = tm.substring(i - 1, i) + st;
+						}
+				}
+				if (ck == "Y") st = "-" + st;
+				return st;
+		}
+}
+//--------------------------------------------------------------------------------------------------
+// 입력창에 숫자 데이터를 입력할때 자동으로 ',' 가 붙어 입력되게 하기 위해 사용한다.
+// 하지만 이 함수는 항상 커서가 맨 뒤로 가기 때문에 숫자의 맨 앞이나 중간 값을 삭제할 때 문제를 발생 시킨다.
+// 이 함수를 사용하기 위해서는 다음과 같이 정의하여야 한다.
+// <INPUT name="amt1" value="" size="10" maxlength="10" class="input01" onKeyUp = 'javascript:is_add_comma(myForm.amt1, amt1)'>
+// 상기 예처럼 인자를 폼 객체와 Input 박스 이름을 준다.
+// * 주의  : 상기 함수를 사용하였다면 Input 박스 값이 숫자 값인지 체크할 때는 is_digit(obj); 를 쓴다.
+//--------------------------------------------------------------------------------------------------
+function is_add_comma(obj) {
+
+	var i = 0;
+	var num = '';
+	var num = new String(del_comma(obj));
+
+	if ((num.length < 1)||(num == '')) {
+				return '';
+		} else {
+				var tm = "";
+				var ck = "";
+				if (num.substring(0, 1) == "-") {
+						tm = num.substring(1, num.length);
+						ck = "Y";
+				} else {
+						tm = num;
+						ck = "N";
+				}
+		var j = 0;
+		var k = 0;
+				var st = "";
+				var cm = ",";
+		var tm_prev = "";
+		var tm_next = "";
+			for(i=0;i<num.length;i++) {
+			if(!is_numeric(num.charAt(i))){    // '.', '-'를 체크하지 못해 is_numeric()를 새로 추가함 0425
+				alert("입력 값이 잘못되었습니다.");
+				obj.focus();
+				return "";
+			}
+		}
+		for (i = 0; i < tm.length; i++) {   // '.'이 한개 이상 나오면 Error 처리
+			if (tm.substring(i, i + 1) == ".")
+				j = j + 1;
+			if (tm.substring(i, i + 1) == "-")
+				k = k + 1;
+		}
+
+		if (j > 1 || k > 0) {
+			alert("입력 값이 잘못되었습니다.");
+			obj.focus();
+			return "";
+		}
+
+		tm = tm.split('.'); // '.'가 하나만 있는 상태에서 '.' 앞 뒤 숫자를 분리한다
+		tm_prev = tm[0];
+		tm_next = tm[1];
+
+		for (var i = tm_prev.length, j = 0; i > 0; i--, j++) {
+
+			if ((j % 3) == 2) {
+				if (tm_prev.length == j + 1) st = tm_prev.substring(i - 1, i) + st;
+				else st = cm + tm_prev.substring(i - 1, i) + st;
+			} else {
+				st = tm_prev.substring(i - 1, i) + st;
+			}
+		}
+		if (tm_next == '' || tm_next == undefined)  // 소숫점 이후에 값이 없는 경우
+		{
+			st = st;
+		}
+		else if (tm_prev == '' || tm_prev == undefined) // 소숫점을 먼저 찍고 숫자를 이어 쓴 경우
+		{
+			st = '0.'+tm_next;
+		}
+		else 	st = st+"."+tm_next;		//분리된 '.' 이하 자릿수를 붙인다.
+		if (ck == "Y") st = "-" + st;		//분리된 '-' 를 붙인다.
+			obj.value = st;
+	}
+
+/*
+		var Key = event.keyCode;
+		if (Key == 9)
+				obj.select();
+*/
+}
+
+//--------------------------------------------------------------------------------------------------
+// 숫자만 입력받게하기 위한 함수
+//
+// IE 6.0에서 한글을 제어하는 곳에 문제가 발생하여 이 함수를 사용하지 않음.
+//--------------------------------------------------------------------------------------------------
+function input_num()
+{
+//	if ((event.keyCode < 48) || (event.keyCode > 57)) event.returnValue = false;
+	return true;
+}
+//--------------------------------------------------------------------------------------------------
+// 숫자열의 ',' 문자를 제거하는 함수
+//--------------------------------------------------------------------------------------------------
+function del_comma(obj) {
+
+//	var obj_str = String(obj);
+	var str =  String(obj.value);
+		if (str.length < 1) {
+				return "";
+		} else {
+				var st = "";
+				var sp = ",";
+				for (var i = 0; i < str.length; i++) {
+						if (sp.indexOf(str.substring(i, i + 1)) == -1) {
+								st += str.substring(i, i + 1);
+						}
+				}
+				return st;
+		}
+}
+function del_comma_replace(obj) {
+	obj.value =  del_comma(obj);
+}
+//--------------------------------------------------------------------------------------------------
+// 날자 입력창에 데이터를 입력할때 자동으로 '.' 가 붙어 입력되게 하기 위해 사용한다.
+// 하지만 이 함수는 항상 커서가 맨 뒤로 가기 때문에 숫자의 맨 앞이나 중간 값을 삭제할 때 문제를 발생 시킨다.
+// 백스페이스 키를 사용할 수 있게 하기위해 해당 키가 들어오는지를 확인하는 부분이 있다.
+// 이 함수를 사용하기 위해서는 다음과 같이 정의하여야 한다.
+// <INPUT type="text" name="req_ymd" value="" size="10" maxlength="8" class="input01"
+//    onkeypress="input_num();"
+//    onBlur='javascript:add_dot( myForm.delivery_ymd)'
+//	  onfocus = 'javascript:del_dot_replace(myForm.delivery_ymd)'>
+// 상기 예처럼 숫자만 입력될 수 있도록 input_num()을 쓰고 Key가 폼을 벋어날때 '.'를 붙일 수 있도록 onBlur를 사용하며
+// Key가 다시 돌아 왔을때 '.'를 제거하고 수정할 수있도록 del_dot_replace()를 사용한다.
+// * 주의  : 날자 체크할 때는F is_valid_date(obj); 를 쓴다.
+// * 주의  : maxlength 는 반드시 8로 쓴다.
+//--------------------------------------------------------------------------------------------------
+function add_dot(obj) {
+
+	var i = 0;
+	var sep = '.';
+	var str = '';
+
+	var t_date = new String(del_dot(obj));
+
+	if((t_date.length < 1) || (t_date == ''))
+		return '';
+
+	for(i=0;i<t_date.length;i++) {
+		if(!is_int(t_date.charAt(i))){    // '.', '-'를 체크하지 못해 is_numeric()를 새로 추가함 0425
+			alert("날자 입력이 잘못되었습니다.\n\nYYYYMMDD 형식으로 입력해 주십시오!!");
+			obj.focus();
+			return "";
+		}
+	}
+	if (t_date.length != 8) {
+		alert("날자 입력이 잘못되었습니다.\n\nYYYYMMDD 형식으로 입력해 주십시오!!");
+		obj.focus();
+		return "";
+		}
+	else {
+		str = t_date.substring(0, 4) + sep + t_date.substring(4, 6) + sep + t_date.substring(6, 8);
+		}
+	obj.value = str;
+}
+
+//--------------------------------------------------------------------------------------------------
+// 날자 타입의 '.' 문자를 제거하는 함수
+//--------------------------------------------------------------------------------------------------
+function del_dot(obj) {
+	var str =  String(obj.value);
+
+		if (str.length < 1) {
+				return "";
+		} else {
+				var st = "";
+				var sp = ".";
+				for (var i = 0; i < str.length; i++) {
+						if (sp.indexOf(str.substring(i, i + 1)) == -1) {
+								st += str.substring(i, i + 1);
+						}
+				}
+				return st;
+		}
+}
+
+function del_dot_replace(obj) {
+	obj.value =  del_dot(obj);
+		// obj.select();
+}
+
+//--------------------------------------------------------------------------------------------------
+// form reset
+//--------------------------------------------------------------------------------------------------
+function on_reset(fname){
+	fname.reset();
+}
+
+//--------------------------------------------------------------------------------------------------
+// E-MAIL 체크
+//--------------------------------------------------------------------------------------------------
+function is_email(obj)
+{
+	var s =  String(obj.value);
+
+	if ( s == "" || s == null)
+	{ alert("이메일을 입력하십시요.");
+
+			return false;
+	}
+	else
+	{
+		var i = 1;
+		var sLength = s.length;
+
+		while ((i < sLength) && (s.charAt(i) != "@"))
+		{
+			i++
+		}
+
+		if ((i >= sLength) || (s.charAt(i) != "@"))
+		{
+				alert("이메일이 형식에 맞지 않습니다.");
+				return false;
+		}
+		else i += 2;
+
+		while ((i < sLength) && (s.charAt(i) != "."))
+		{
+			i++
+		}
+
+		if ((i >= sLength - 1) || (s.charAt(i) != "."))
+		{
+				alert("이메일이 형식에 맞지 않습니다.");
+				return false;
+		}
+		else return true;
+	}
+}
+
+//--------------------------------------------------------------------------------------------------
+//
+//--------------------------------------------------------------------------------------------------
+
+function check_pilsu_length (obj, len, str){
+	var obj_val = obj.value;
+
+	if( obj_val == "" || obj_val.length == 0 ){
+		alert(name + "을(를) 입력하십시오.");
+		return false;
+	} else if( ltrim(obj_val).length == 0 ){
+		alert("공백문자만 입력되었습니다. 값을 입력하십시오.");
+		return false;
+	}
+
+	return check_length(obj, len, str);
+}
+
+//--------------------------------------------------------------------------------------------------
+// select box의 모든 option을 selected 상태로 바꾼다.
+//--------------------------------------------------------------------------------------------------
+function select_all(obj){
+	 var select_cnt = obj.length-1;
+
+	 for(i=0; i<select_cnt; i++){
+			obj.options[i].selected = true;
+	 }
+}
+
+//--------------------------------------------------------------------------------------------------
+// select box의 모든 option을 selected 상태로 바꾼다.
+//--------------------------------------------------------------------------------------------------
+function cm_open_help(pageid){
+	var	top  = (window.screen.availHeight - 500)  / 2;
+	var	left = (window.screen.availWidth  - 700) / 2;
+	var option = "fullscreen=no,toolbar=no,location=no,directories=no,status=no,menubar=no,scrollbars=no,resizable=yes,left=" + left + ",top=" + top + ",width=680,height=500";
+	HelpWindow = window.open("/sg/om/sgom_a10_o1p.jsp?pageid="+ pageid, "HelpWindow", option)
+
+}
+
+//--------------------------------------------------------------------------------------------------
+// 탭키 체크 (7월 4일)
+//--------------------------------------------------------------------------------------------------
+function check_tabkey(e) {
+		if (n) {
+				var nKey = e.which;
+				//var nValue = String.fromCharCode(nKey)
+		}
+		if (ie) {
+				var ieKey = e.keyCode;
+				//var ieValue = String.fromCharCode(ieKey)
+		}
+	if (nKey==9 || ieKey==9)
+		 return true;
+	else return false;
+}
+
+//--------------------------------------------------------------------------------------------------
+// on_click시 background color 바꾸는 함수 (7월 18일)
+//--------------------------------------------------------------------------------------------------
+
+var bg_old_color="";
+var old_index=-1;
+var out_old_color="";
+var over_old_color="";
+
+function change_backcolor(self, color) {
+
+	if(old_index > -1) {
+		if(self.parentNode.parentNode.rows[old_index]!=self) {
+			self.parentNode.parentNode.rows[old_index].style.backgroundColor = bg_old_color;
+		}
+
+		self.parentNode.parentNode.rows[old_index].onmouseout = out_old_color;
+		self.parentNode.parentNode.rows[old_index].onmouseover = over_old_color;
+	}
+
+	for(var i=0; i<self.parentNode.parentNode.rows.length; i++) {
+		if(self.parentNode.parentNode.rows[i]==self) {
+			old_index = i;
+			bg_old_color = color;
+			out_old_color = self.onmouseout;
+			over_old_color = self.onmouseover;
+			self.style.backgroundColor = "#F7FADB";
+			self.onmouseout = "";
+			self.onmouseover= "";
+		}
+	}
+}
+
+//-------------------------------------------------------------------
+// 날짜의 정확성 검사(년, 월까지만) : 7월 19일
+//-------------------------------------------------------------------
+function is_valid_date2(obj)
+{
+		var t_date = new String(del_dot(obj));
+		var t_year  = parseInt(t_date.substring(0,4),10);
+		var t_month = parseInt(t_date.substring(4,6),10);
+
+		if (obj.value.length == 0){
+				obj.focus();
+				return false;
+		}
+		if (check_date_digit(obj) == false){
+				alert('날짜는 형식이 틀렸습니다.');
+				obj.value='';
+				obj.focus();
+				return false;
+		}
+		if (t_date.length != 6){
+				alert('날짜의 입력이 틀렸습니다.');
+				obj.focus();
+				return false;
+		}
+		if (t_year < 1900 || t_year >2999){
+				alert('날짜가 잘못 입력되었습니다. 년도는 1900년에서 2999년까지 입니다.');
+				obj.focus();
+				return false;
+		}
+		if (t_month <1 || t_month > 12){
+				alert('날짜가 잘못 입력되었습니다. 달은 1월에서 12월까지 입니다.');
+				obj.focus();
+				return false;
+		}
+
+		return true;
+}
+
+
+//-------------------------------------------------------------------
+// 날짜의 정확성 검사(년까지만) : 7월 24일
+//-------------------------------------------------------------------
+function is_valid_date3(obj)
+{
+		var t_date = new String(del_dot(obj));
+		var t_year  = parseInt(t_date.substring(0,4),10);
+
+		if (obj.value.length == 0){
+				obj.focus();
+				return false;
+		}
+		if (check_date_digit(obj) == false){
+				alert('날짜는 형식이 틀렸습니다.');
+				obj.value='';
+				obj.focus();
+				return false;
+		}
+		if (t_date.length != 4){
+				alert('날짜의 입력이 틀렸습니다.');
+				obj.focus();
+				return false;
+		}
+		if (t_year < 1900 || t_year >2999){
+				alert('날짜가 잘못 입력되었습니다. 년도는 1900년에서 2999년까지 입니다.');
+				obj.focus();
+				return false;
+		}
+
+		return true;
+}
+
+//-------------------------------------------------------------------
+// 두 년도 사이의 관계는 올바르게 정립되어 있는가 ?
+// 날짜의 세팅이 Text로만 이루어져 있는 경우
+// : 7월 24일
+//-------------------------------------------------------------------
+function is_valid_year_with(s_date, e_date)
+{
+				var t_s_date = parseInt(parseFloat(del_dot(s_date), 10), 10);
+				var t_e_date = parseFloat(parseFloat(del_dot(e_date), 10), 10);
+
+				if (is_valid_date3(s_date) == false)
+				{
+								s_date.focus();
+								return false;
+				}
+				if (is_valid_date3(e_date) == false)
+				{
+								e_date.focus();
+								return false;
+				}
+
+				if (t_s_date > t_e_date)
+				{
+								alert('시작일이 종료일보다 큽니다.');
+								e_date.focus();
+								return false;
+				}
+				return true;
+}
+
+function clsForm(obj)
+{
+	obj.value="";
+}
+
+function na_open_window(name, url, left, top, width, height, toolbar, menubar, statusbar, scrollbar, resizable)
+{
+	toolbar_str = toolbar ? 'yes' : 'no';
+	menubar_str = menubar ? 'yes' : 'no';
+	statusbar_str = statusbar ? 'yes' : 'no';
+	scrollbar_str = scrollbar ? 'yes' : 'no';
+	resizable_str = resizable ? 'yes' : 'no';
+	window.open(url, name, 'left='+left+',top='+top+',width='+width+',height='+height+',toolbar='+toolbar_str+',menubar='+menubar_str+',status='+statusbar_str+',scrollbars='+scrollbar_str+',resizable='+resizable_str);
+}
+
+
+// ---------------------------------------------
+// 공백 제거
+// ---------------------------------------------
+function trim(str) { // 공백제거
+		var count = str.length;
+		var len = count;
+		var st = 0;
+
+		while ((st < len) && (str.charAt(st) <= ' ')) {
+		 st++;
+		}
+		while ((st < len) && (str.charAt(len - 1) <= ' ')) {
+		 len--;
+		}
+		return ((st > 0) || (len < count)) ? str.substring(st, len) : str ;
+}
+
+function checkId(str) {
+		var T_name = _upperValue +_lowerValue +_intValue;
+				for(var i=0; i<str.length; i++) {
+						if(T_name.indexOf(str.charAt(i))==-1){
+								return false;
+						}
+				}
+		return true;
+}
+
+
+function Format(n, length ) {
+    n = parseInt(n) + parseInt(Math.pow(10,length));
+    var ret = new String(n);
+    return ret.substring(1);
+}
+
+
+function restore_img_src(name, nsdoc)
+{
+  var img = eval((navigator.appName.indexOf('Netscape', 0) != -1) ? nsdoc+'.'+name : 'document.all.'+name);
+  if (name == '')
+    return;
+  if (img && img.altsrc) {
+    img.src    = img.altsrc;
+    img.altsrc = null;
+  }
+}
+
+function preload_img()
+{
+  var img_list = preload_img.arguments;
+  if (document.preloadlist == null)
+    document.preloadlist = new Array();
+  var top = document.preloadlist.length;
+  for (var i=0; i < img_list.length; i++) {
+    document.preloadlist[top+i]     = new Image;
+    document.preloadlist[top+i].src = img_list[i+1];
+  }
+}
+
+function change_img_src(name, nsdoc, rpath, preload)
+{
+  var img = eval((navigator.appName.indexOf('Netscape', 0) != -1) ? nsdoc+'.'+name : 'document.all.'+name);
+  if (name == '')
+    return;
+  if (img) {
+    img.altsrc = img.src;
+    img.src    = rpath;
+  }
+}
+
+
+var NDIGITS = 16;
+var STACKSIZE = 12;
+var value = 0;
+var level = 0;
+var entered = true;
+var decimal = 0;
+var fixed = 0;
+var exponent = false;
+var inverse = false;
+
+//-------------------------------------------------------------------
+// 수치계산시 오류변환
+//-------------------------------------------------------------------
+function format(value){
+	var valStr = "" + value;
+		if (valStr.indexOf("N")>=0 || (value == 2*value && value == 1+value))
+			return "Error ";
+	var i = valStr.indexOf("e")
+		if (i>=0){
+			var expStr = valStr.substring(i+1,valStr.length);
+				if (i>11) i=11;  // max 11 digits
+			valStr = valStr.substring(0,i);
+				if (valStr.indexOf(".")<0) valStr += ".";
+					valStr += " " + expStr;
+				}else{
+					var valNeg = false;
+						if (value < 0){
+							value = -value; valNeg = true;
+						}
+					var valInt = Math.floor(value);
+					var valFrac = value - valInt;
+					var prec = NDIGITS - (""+valInt).length - 1;
+						if (! entered && fixed>0)
+							prec = fixed;
+					var mult = " 1000000000000000000".substring(1,prec+2);
+
+					var frac = Math.floor(valFrac * mult + 0.5);
+					valInt = Math.floor(Math.floor(value * mult + .5) / mult);
+						if (valNeg)
+							valStr = "-" + valInt;
+						else
+							valStr = "" + valInt;
+					var fracStr = "00000000000000"+frac;
+					fracStr = fracStr.substring(fracStr.length-prec, fracStr.length);
+					i = fracStr.length-1;
+					if (entered || fixed==0){
+						// remove trailing zeros unless fixed during entry.
+						while (i>=0 && fracStr.charAt(i)=="0")
+							--i;
+					fracStr = fracStr.substring(0,i+1);
+				}
+					if (i>=0) valStr += "." + fracStr;
+			}
+
+		return valStr;
+	}
+
+
+
+function fc_chk_byte_20090115(aro_name,ari_max)  // 중복된 함수명 확인필요
+{
+	var ls_str = aro_name.value; // 이벤트가 일어난 컨트롤의 value 값
+	var li_str_len = ls_str.length; // 전체길이
+
+	// 변수초기화
+	var li_max = ari_max; // 제한할 글자수 크기
+	var i = 0; // for문에 사용
+	var li_byte = 0; // 한글일경우는 2 그밖에는 1을 더함
+	var li_len = 0; // substring하기 위해서 사용
+	var ls_one_char = ""; // 한글자씩 검사한다
+	var ls_str2 = ""; // 글자수를 초과하면 제한할수 글자전까지만 보여준다.
+
+	for(i=0; i< li_str_len; i++)
+	{
+	// 한글자추출
+	ls_one_char = ls_str.charAt(i);
+
+		// 한글이면 2를 더한다.
+		if (escape(ls_one_char).length > 4)
+		{
+		li_byte += 2;
+		}
+		// 그밗의 경우는 1을 더한다.
+		else
+		{
+		li_byte++;
+		}
+
+		// 전체 크기가 li_max를 넘지않으면
+		if(li_byte <= li_max)
+		{
+		li_len = i + 1;
+		}
+	}
+	//alert(li_byte);
+	// 전체길이를 초과하면
+	if(li_byte > li_max)
+	{
+	alert("1000 글자를 초과 입력할수 없습니다. \n 초과된 내용은 자동으로 삭제 됩니다. ");
+	ls_str2 = ls_str.substr(0, li_len);
+	aro_name.value = ls_str2;
+
+	}
+	aro_name.focus();
+}
+
+function onlyNumber()
+{
+	if(( event.keyCode >= 97 && event.keyCode <= 122) || (event.keyCode >=65 && event.keyCode <=90)) {
+		event.keyCode=0;
+	}
+}
+
+// 주어진 패턴 공식에서 문자만 뽑아내서, 갯수를 세고 각 A,B,C는 patChar[i]형태로 배열에 저장한다.
+function extChar(patt) {
+
+	var charReg;
+	charReg = /\d/; // 삭제할 부분 숫자
+	//   charReg = /[a-z|A-Z]/; // 알파벳만 인정
+	//   charReg = /[a-z]/; // 알파벳 소문자만 인정
+	charReg = /[A-Z]/; // 알파벳 대문자만 인정
+
+	var pattern=patt; // 패턴 공식 값 DB에서 읽어올 것
+	var Char="";
+	var patChar=pattern.split("");
+
+	for(var i=0;i<patChar.length;i++) {
+		if(charReg.test(patChar[i]) )  {
+			Char+=patChar[i];
+		}
+	}
+
+	return Char; //최종으로 뽑아낸 문자만 리턴해준다.
+}
+
+function replace(out,str,add) {
+	temp = "" + str;
+	while (temp.indexOf(out)>-1) {
+		pos= temp.indexOf(out);
+		temp = "" + (temp.substring(0, pos) + add + temp.substring((pos + out.length), temp.length));
+	}
+	result = temp;
+	return result;
+}
+
+function trim(str){
+   //정규 표현식을 사용하여 화이트스페이스를 빈문자로 전환
+    str = str.replace(/^\s*/,'').replace(/\s*$/, '');
+
+   return str; //변환한 스트링을 리턴.
+  }
+
+
+
+/*
+사용법
+<html>
+  <head>
+    <title>Simple jsp page</title>
+  <script src="/BSC/common/js/common.js"></script>
+  <script>
+  log("...can you see this?...");
+  </script>
+  </head>
+  <body>Place your content here</body>
+</html>*/
+
+var oLogWin, oLogger;
+var lPreTime;
+
+function makeLogger(oLogWin, sID) {
+  var oLogDoc = oLogWin.document;
+  var oTextArea = oLogDoc.getElementById(sID);
+  if (!oTextArea) {
+    oTextArea = oLogDoc.createElement("TEXTAREA");
+    oLogDoc.body.insertBefore(oTextArea,null);
+
+    oTextArea.id = sID;
+    oTextArea.style.height = oLogDoc.body.clientHeight - 20;
+    oTextArea.style.width =  oLogDoc.body.clientWidth;
+    oTextArea.style.font = "9pt Arial";
+  }
+
+  return oTextArea;
+}
+
+function log(str, bTime) {
+  if (!oLogWin || oLogWin.closed) {
+    oLogWin = window.open("","LogWin","top=5,left=5,width=350,height=400,resizable");
+    oLogDoc = oLogWin.document;
+    var sScript = "<table width=100% cellpadding=0 cellspacing=0 border=0 align=center style='font-size:9pt'><tr>" +
+                  "<td align=left style='padding-left:10;height:20;font-weight:700'>Script Loggger</td>" +
+                  "<td align=right style='padding-right:10'>" +
+                  "<span style='cursor:hand;width:40;height:18;padding:0,3,0,3;text-align:center;border:1 solid gray;background-color:#eaeaea'" +
+                  " onclick='document.getElementById(\"LogArea\").value=\"\"'>clear</span>" +
+                  "</td></tr></table>";
+    oLogDoc.write(sScript);
+    oLogDoc.body.style.margin = "0,0,0,0";
+
+    oLogger = makeLogger(oLogWin, "LogArea");
+
+    lPreTime = new Date().getTime();
+  }
+
+  var sTime = new Date().getTime() - lPreTime;
+
+  if (bTime) {
+    lPreTime = new Date().getTime();
+  }
+
+  oLogger.value += "time : " + sTime + "\t> " + str + "\n";
+  oLogger.scrollTop = oLogger.scrollHeight - oLogger.clientHeight;
+}
+
+function fnc_sendMemo(frm,url,url2){
+	  
+	   
+    window.open("","kms_pop","status=no,scrollbars=no,resizable=no,top=50,left=200,width=800,height=300");
+    frm.action 		 = url;
+    frm.target          = "kms_pop";
+    frm.submit();
+    
+    frm.action 		 = url2;
+    frm.target          = "kms_pop";
+    frm.submit();
+    
+
+   // kms_pop.document.memo_form.message.value="dfdff" 
+   
+ //alert(kms_pop.document.memo_form.message.value);
+}

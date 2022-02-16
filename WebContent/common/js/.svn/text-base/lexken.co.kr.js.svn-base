@@ -1,0 +1,70 @@
+    /**
+     * @author nox &lt;nox@lexken.co.kr&gt;, &lt;noxajax@gmail.com&gt;
+     * @version 0.5, 2007/09/10, initial revision
+     * @fileOverview
+     * 
+     * <p>Copyright (c) 2005 Thomas Fuchs (http://script.aculo.us, http://mir.aculo.us)</p>
+     * 
+     * Lexken object는 해당 페이지내에서 필요로 하는 script를 동적으로 load하도록 설정하는 역할을 담당.<br />
+     * 이중에 필수(Lexken.EssentialScript)로 loading할 script와 동적(Lexken.IncludesScript)으로 <br />
+     * loading할 script로 나누어서 호출한다.<br /><br />
+     * 이 객체들을 사용하기 위해선 반드시 prototype.js(Ver.1.5.x 이상)을 포함해야 한다. <br /><br />
+     * 
+     * 사용예는 아래와 같다.<br />
+     * &lt;script type="text/javascript" src="../common/js/Lexken.co.kr.js"&gt;&lt;/script&gt;<br />
+     * &lt;script type="text/javascript" src="../common/js/Lexken.co.kr.js?loading=cookie,formCheck"&gt;&lt;/script&gt;
+     *   
+     */
+    
+    /**
+     * 모든 페이지에 Lexken 관련 script를 사용할 때 항상 먼저 호출해야 하는 object<br />
+     * &lt;script type="text/javascript" src="../common/js/Lexken.co.kr.js"&gt;&lt;/script&gt;
+     * 이와 같이 호출하면 자동 로딩(Lexken.load();)된다.
+     * 
+     * @static
+     */
+    var Lexken = {
+        Version: '0.5.0',
+        ScriptRegExp: /lexken.co.kr\.js(\?.*)?$/,
+        IncludesScript: 'file,tips,calendar',
+        EssentialScript: 'string,util,date',
+        
+        /**
+         * Leken object가 포함된 script 구문의 내용을 분석해서 필요한 script만 load하도록 설정
+         * @private
+         * @param {string} libraryName path를 포함한 script 위치명
+         */
+        require: function(libraryName) {
+        	document.write('<script type="text/javascript" src="' + libraryName + '"></script>');
+        },
+
+        /**
+         * 필수 script와 동적으로 포함하는 script를 load하게 만든다.
+         * @function
+         * @exception {string} 'Fishing requires the Prototype JavaScript framework >= 1.5.x'
+         */
+        load: function() {
+            if((typeof Prototype == 'undefined') ||
+                parseFloat(Prototype.Version.split(".")[0] + "." + Prototype.Version.split(".")[1]) < 1.5)
+                throw("Lexken requires the Prototype JavaScript framework >= 1.5.x");
+            
+            $A (document.getElementsByTagName("script")).findAll( function(s) {
+                return (s.src && s.src.match(Lexken.ScriptRegExp))
+            }).each( function(s) {
+            	var src = s.src;            	
+            	var path = src.replace(Lexken.ScriptRegExp,'');
+                var includes = src.match(/\?.*load=([a-z,]*)/);
+                                
+                // attach essential script!
+                src += (!includes ? '?load=' : ',') + Lexken.EssentialScript;
+                includes = src.match(/\?.*load=([a-z,]*)/);
+                (includes ? includes[1] : Lexken.IncludesScript).split(',').each(
+                function(include) {
+                	Lexken.require(path + include + '.js') }
+                );
+            });
+        }
+    }
+
+    // object loading!
+    Lexken.load();

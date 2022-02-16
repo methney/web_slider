@@ -1,0 +1,273 @@
+var root			= "/EMCBSC";
+
+function login_flash()
+{
+	document.write("<object classid='clsid:D27CDB6E-AE6D-11cf-96B8-444553540000' codebase='http://download.macromedia.com/pub/shockwave/cabs/flash/swflash.cab#version=6,0,0,0' width='470' height='251'>");
+	document.write("<param name='movie' value='../common/images/login/img.swf' />");
+	document.write("<param name='quality' value='high' />");
+	document.write("<param name='wmode' VALUE='transparent' />");
+	document.write("<embed src='../common/images/login/img.swf' play='true' loop='true' quality='high' pluginspage='http://www.macromedia.com/shockwave/download/index.cgi?P1_Prod_Version=ShockwaveFlash' width='470' height='251'></embed>");
+	document.write("</object>");
+}                  
+                
+function main_dept_flash(context, imgurl , admin_gubun, metric_gbn, year, month, anal_cycle, sabun)
+{
+	document.write("<object classid='clsid:D27CDB6E-AE6D-11cf-96B8-444553540000' codebase='http://download.macromedia.com/pub/shockwave/cabs/flash/swflash.cab#version=7,0,19,0' width='369' height='165' id='mchart' align='middle'>");
+	document.write("<param name='movie' value='"+imgurl+"/flash/VBOX_BAR.swf?_pWs=369&_pHs=165&_pPath="+root+"&_pParam="+context+"/mon/Main_bar_chart_xml.jsp?admin_gubun="+admin_gubun+"%26metric_gbn="+metric_gbn+"%26year="+year+"%26month="+month+"%26anal_cycle="+anal_cycle+"%26sabun="+sabun+"' />");
+	document.write("<param name='wmode' value='transparent' />");
+	document.write("<param name='allowScriptAccess' value='sameDomain' />");
+	document.write("<param name='quality' value='high' />");
+	document.write("<param name='bgcolor' value='#ffffff' />");
+	document.write("<embed src='"+imgurl+"/flash/VBOX_BAR.swf?_pWs=419&_pHs=182&_pParam="+context+"/mon/Main_bar_chart_xml.jsp?' width='419' height='182' quality='high' bgcolor='#ffffff' name='mchart' align='middle' allowScriptAccess='sameDomain' pluginspage='http://www.macromedia.com/go/getflashplayer' type='application/x-shockwave-flash'></embed>");
+	document.write("</object>");
+}
+
+//전략상세
+function strategy_flash(imgurl, year, month, anal_cycle, strategy_id, metric_gbn, code)
+{
+	document.write("<object classid='clsid:D27CDB6E-AE6D-11cf-96B8-444553540000' codebase='http://download.macromedia.com/pub/shockwave/cabs/flash/swflash.cab#version=7,0,19,0' width='100%' height='280' id='mchart' align='middle'>");
+	document.write("<param name='movie' value='"+imgurl+"/flash/VBOX_CHART.swf?_pWs=540&_pHs=220&_pPath="+root+"&_pParam=StrategyDetail_xml.jsp?year="+year+"%26month="+month+"%26anal_cycle="+anal_cycle+"%26strategy_id="+strategy_id+"%26metric_gbn="+metric_gbn+"%26code="+code+"' />");
+	document.write("<param name='allowScriptAccess' value='sameDomain' />");
+	document.write("<param name='wmode' value='transparent' />");
+	document.write("<param name='quality' value='high' />");
+	document.write("<param name='bgcolor' value='#ffffff' />");
+	document.write("<embed src='"+imgurl+"/flash/mchart.swf?_pWs=540&_pHs=220&_pParam=StrategyDetail_xml.jsp?year="+year+"%26month="+month+"%26anal_cycle="+anal_cycle+"%26strategy_id="+strategy_id+"%26metric_gbn="+metric_gbn+"%26code="+code+"' width='100%' height='280' quality='high' bgcolor='#ffffff' name='mchart' align='middle' allowScriptAccess='sameDomain' pluginspage='http://www.macromedia.com/go/getflashplayer' type='application/x-shockwave-flash'></embed>");
+	document.write("</object>");
+}
+
+//지표상세
+function metric_flash(imgurl, year, month, anal_cycle, metric_id, metric_gbn)
+{
+	document.write("<object classid='clsid:D27CDB6E-AE6D-11cf-96B8-444553540000' codebase='http://download.macromedia.com/pub/shockwave/cabs/flash/swflash.cab#version=7,0,19,0' width='100%' height='260' id='mchart' align='middle'>");
+	document.write("<param name='movie' value='"+imgurl+"/flash/VBOX_CHART.swf?_pWs=580&_pHs=200&_pPath="+root+"&_pParam=MetricDetail_xml.jsp?year="+year+"%26month="+month+"%26anal_cycle="+anal_cycle+"%26metric_id="+metric_id+"%26metric_gbn="+metric_gbn+"' />");
+	document.write("<param name='allowScriptAccess' value='sameDomain' />");
+	document.write("<param name='wmode' value='transparent' />");
+	document.write("<param name='quality' value='high' />");
+	document.write("<param name='bgcolor' value='#ffffff' />");
+	document.write("<embed src='"+imgurl+"/flash/mchart.swf?_pWs=580&_pHs=200&_pParam=MetricDetail_xml.jsp?year="+year+"%26month="+month+"%26anal_cycle="+anal_cycle+"%26metric_id="+metric_id+"%26metric_gbn="+metric_gbn+"' width='100%' height='260' quality='high' bgcolor='#ffffff' name='mchart' align='middle' allowScriptAccess='sameDomain' pluginspage='http://www.macromedia.com/go/getflashplayer' type='application/x-shockwave-flash'></embed>");
+	document.write("</object>");
+}
+
+//지표산식상세
+function metric_caltype_flash(imgurl, year, anal_cycle, metric_id, metric_gbn)
+{
+	document.write("<object classid='clsid:D27CDB6E-AE6D-11cf-96B8-444553540000' codebase='http://download.macromedia.com/pub/shockwave/cabs/flash/swflash.cab#version=7,0,19,0' width='100%' height='260' id='mchart' align='middle'>");
+	document.write("<param name='movie' value='"+imgurl+"/flash/VBOX_CHART.swf?_pWs=580&_pHs=200&_pPath="+root+"&_pParam=MetricCalTypeDetail_xml.jsp?year="+year+"%26anal_cycle="+anal_cycle+"%26metric_id="+metric_id+"%26metric_gbn="+metric_gbn+"' />");
+	document.write("<param name='allowScriptAccess' value='sameDomain' />");
+	document.write("<param name='wmode' value='transparent' />");
+	document.write("<param name='quality' value='high' />");
+	document.write("<param name='bgcolor' value='#ffffff' />");
+	document.write("<embed src='"+imgurl+"/flash/mchart.swf?_pWs=580&_pHs=200&_pParam=MetricCalTypeDetail_xml.jsp?year="+year+"%26anal_cycle="+anal_cycle+"%26metric_id="+metric_id+"%26metric_gbn="+metric_gbn+"' width='100%' height='260' quality='high' bgcolor='#ffffff' name='mchart' align='middle' allowScriptAccess='sameDomain' pluginspage='http://www.macromedia.com/go/getflashplayer' type='application/x-shockwave-flash'></embed>");
+	document.write("</object>");
+}
+
+//인과관계분석
+function causal_flash(imgurl, url2, url3)
+{
+	document.write("<object classid='clsid:D27CDB6E-AE6D-11cf-96B8-444553540000' codebase='http://download.macromedia.com/pub/shockwave/cabs/flash/swflash.cab#version=7,0,19,0' width='740' height='425'>");
+	document.write("<param name='movie' value='"+imgurl+"/flash/VBOX_CAUSAL.swf?_pSignal="+url2+"&_pPath="+root+"&_pParam="+url3+"' />");
+	document.write("<param name='wmode' value='transparent' />");
+	document.write("<param name='quality' value='high' />");
+	document.write("<embed src='"+imgurl+"/flash/causal_main.swf?_pSignal="+url2+"%26_pParam="+url3+"' width='740' height='425' quality='high' pluginspage='http://www.macromedia.com/go/getflashplayer' type='application/x-shockwave-flash'></embed>");
+	document.write("</object>");
+}
+
+// 조직비교
+function orgcomp_flash(imgurl, sabun, year, month, anal_cycle, dept_list, admin_gubun, metric_gbn)
+{
+    document.write("<object classid='clsid:D27CDB6E-AE6D-11cf-96B8-444553540000' codebase='http://download.macromedia.com/pub/shockwave/cabs/flash/swflash.cab#version=7,0,19,0' width='750' height='415'>");
+    document.write("<param name='movie' value='"+imgurl+"/flash/VBOX_COMPARE.swf?_pPath="+root+"&_pParam=OrgComp_xml.jsp?sabun="+sabun+"%26year="+year+"%26month="+month+"%26anal_cycle="+anal_cycle+"%26dept_list="+dept_list+"%26admin_gubun="+admin_gubun+"%26metric_gbn="+metric_gbn+"' />");
+    document.write("<param name='wmode' value='transparent' />");
+    document.write("<param name='quality' value='high' />");
+    document.write("<embed src='"+imgurl+"/flash/VBOX_COMPARE.swf?_pPath="+root+"&_pParam=OrgComp_xml.jsp?sabun="+sabun+"%26year="+year+"%26month="+month+"%26anal_cycle="+anal_cycle+"%26dept_list="+dept_list+"%26admin_gubun="+admin_gubun+"%26metric_gbn="+metric_gbn+"' width='750' height='415' quality='high' pluginspage='http://www.macromedia.com/go/getflashplayer' type='application/x-shockwave-flash'></embed>");
+    document.write("</object>");
+}
+
+
+function calendar(calendar_url)
+{
+	document.write("<object id='calendar' data='"+calendar_url+"/calendar_new.html' type='text/x-scriptlet' style='position:absolute;display:none;width:220;height:225;'>");
+	document.write("</object>");
+}
+
+//메인의 관점별 게이지차트 
+function main_gauge_flash(context, imgurl, admin_gubun, metric_gbn, year, month, anal_cycle, sabun)
+{                                                                                                                                                                                                       
+	document.write("<object classid='clsid:D27CDB6E-AE6D-11cf-96B8-444553540000' codebase='http://download.macromedia.com/pub/shockwave/cabs/flash/swflash.cab#version=7,0,19,0' width='297' height='297' id='mchart' align='middle'>");
+	document.write("<param name='movie' value='"+imgurl+"/flash/VBOX_GAUGE.swf?_pWs=297&_pHs=297&_pPath="+root+"&_pParam="+context+"/mon/MainGuage_xml.jsp?admin_gubun="+admin_gubun+"%26metric_gbn="+metric_gbn+"%26year="+year+"%26month="+month+"%26anal_cycle="+anal_cycle+"%26sabun="+sabun+"' />");
+	document.write("<param name='wmode' value='transparent' />");
+	document.write("<param name='allowScriptAccess' value='sameDomain' />");
+	document.write("<param name='quality' value='high' />");
+	document.write("<param name='bgcolor' value='#ffffff' />");
+	document.write("<embed src='"+imgurl+"/flash/VBOX_GAUGE.swf?_pWs=270&_pHs=247&_pPath="+root+"&_pParam="+context+"/mon/MainGuage_xml.jsp?' width='270' height='247' quality='high' bgcolor='#ffffff' name='mchart' align='middle' allowScriptAccess='sameDomain' pluginspage='http://www.macromedia.com/go/getflashplayer' type='application/x-shockwave-flash'></embed>");
+	document.write("</object>");
+}
+
+//전략체계도
+function strategymap_flash(context, imgurl, url, sabun, sc_dept_id, sc_dept_nm, admin_gubun, admin)
+{
+	//var admin="_StartegyAdmin_";
+	document.write("<object classid='clsid:D27CDB6E-AE6D-11cf-96B8-444553540000' codebase='http://download.macromedia.com/pub/shockwave/cabs/flash/swflash.cab#version=7,0,19,0' width='785' height='465'>");
+	document.write("<param name='movie' value='"+imgurl+"/flash/VBOX_STRATEGYMAPS.swf?_pPath="+root+"&AdminBool="+admin+"&requestURL="+context+"/base/BaseStrategyMap_xml.jsp?"+url+"%26sc_dept_id=" + sc_dept_id + "%26sc_dept_nm=" + sc_dept_nm + "%26admin_bool="+admin+"' />");
+	document.write("<param name='wmode' value='transparent' />");
+	document.write("<param name='quality' value='high' />");
+	document.write("<embed src='"+imgurl+"/flash/VBOX_STRATEGYMAPS.swf?_pPath="+root+"&AdminBool="+admin+"&requestURL="+context+"/mon/vbox_test.xml' width='800' height='530' quality='high' pluginspage='http://www.macromedia.com/go/getflashplayer' type='application/x-shockwave-flash'></embed>");
+	document.write("</object>");
+}
+
+//전체 조직도
+function orgtotal_flash(context, imgurl, admin_gubun, metric_gbn, year, month, anal_cycle, sabun, sc_dept_grp_id)
+{
+	//var bgNum = sc_dept_grp_id.substr(1,1);
+	var bgNum = year;
+
+    document.write("<object classid='clsid:D27CDB6E-AE6D-11cf-96B8-444553540000' codebase='http://download.macromedia.com/pub/shockwave/cabs/flash/swflash.cab#version=7,0,19,0' width='790' height='445'>");
+	document.write("<param name='movie' value='"+imgurl+"/flash/VBOX_ORGANIZATIONS.swf?bgNum="+bgNum+"&_pPath="+root+"&_pSignal=trafficSignal_xml.jsp?year="+year+"&_pParam="+context+"/mon/OrgDeptDiagram_xml.jsp?admin_gubun="+ admin_gubun + "%26metric_gbn=" + metric_gbn + "%26year=" +year + "%26month=" + month + "%26anal_cycle=" + anal_cycle+ "%26sc_dept_grp_id=" + sc_dept_grp_id+"' />");
+	document.write("<param name='wmode' value='transparent' />");
+	document.write("<param name='quality' value='high' />");
+	document.write("<embed src='"+imgurl+"/flash/VBOX_ORGANIZATIONS.swf?bgNum="+bgNum+"&_pPath="+root+"&_pSignal=trafficSignal_xml.jsp?year="+year+"&_pParam=OrgDeptDiagram_xml.jsp' width='600' height='489' quality='high' pluginspage='http://www.macromedia.com/go/getflashplayer' type='application/x-shockwave-flash'></embed>");
+	document.write("</object>");
+}
+
+function orgtotal_flash_admin(context, imgurl, admin_gubun, metric_gbn, year, month, anal_cycle, sabun, sc_dept_grp_id)
+{
+	//var bgNum = sc_dept_grp_id.substr(1,1);
+	var bgNum = year;
+
+    document.write("<object classid='clsid:D27CDB6E-AE6D-11cf-96B8-444553540000' codebase='http://download.macromedia.com/pub/shockwave/cabs/flash/swflash.cab#version=7,0,19,0' width='790' height='445'>");
+	document.write("<param name='movie' value='"+imgurl+"/flash/VBOX_ORGANIZATIONS.swf?bgNum="+bgNum+"&_pPath="+root+"&_pSignal=trafficSignal_xml.jsp?year="+year+"&_pParam="+context+"/mon/OrgDeptDiagram_xml.jsp?admin_gubun="+ admin_gubun + "%26metric_gbn=" + metric_gbn + "%26year=" +year + "%26month=" + month + "%26anal_cycle=" + anal_cycle+ "%26sc_dept_grp_id=" + sc_dept_grp_id +"&_pControl=admin_bsc_0001&_pPostUrl="+context+"/mon/OrgDiagramController.jsp?year="+year+"' />");
+	document.write("<param name='wmode' value='transparent' />");
+	document.write("<param name='quality' value='high' />");
+	document.write("<embed src='"+imgurl+"/flash/VBOX_ORGANIZATION.swf?_pPath="+root+"&_pParam=OrgDeptDiagram_xml.jsp&_pParam2=OrgDeptDiagramLocation_xml.jsp' width='600' height='489' quality='high' pluginspage='http://www.macromedia.com/go/getflashplayer' type='application/x-shockwave-flash'></embed>");
+	document.write("</object>");  
+}
+
+
+//관점상세
+function perspective_flash(imgurl, year, month, anal_cycle, sc_dept_id, perspective_id, perspective_nm, metric_gbn)
+{
+	document.write("<object classid='clsid:D27CDB6E-AE6D-11cf-96B8-444553540000' codebase='http://download.macromedia.com/pub/shockwave/cabs/flash/swflash.cab#version=7,0,19,0' width='100%' height='280' id='mchart' align='middle'>");
+	document.write("<param name='movie' value='"+imgurl+"/flash/VBOX_CHART.swf?_pWs=540&_pHs=220&_pPath="+root+"&_pParam=PerspectiveDetail_xml.jsp?year="+year+"%26month="+month+"%26anal_cycle="+anal_cycle+"%26perspective_nm=" + perspective_nm + "%26sc_dept_id=" + sc_dept_id + "%26perspective_id="+perspective_id+"%26metric_gbn="+metric_gbn+"' />");
+	document.write("<param name='allowScriptAccess' value='sameDomain' />");
+	document.write("<param name='wmode' value='transparent' />");
+	document.write("<param name='quality' value='high' />");
+	document.write("<param name='bgcolor' value='#ffffff' />");
+	document.write("<embed src='"+imgurl+"/flash/mchart.swf?_pWs=540&_pHs=220&_pPath="+root+"&_pParam=StrategyDetail_xml.jsp?year="+year+"%26month="+month+"%26anal_cycle="+anal_cycle+"%26sc_dept_id=" + sc_dept_id + "%26perspective_id="+perspective_id+"%26metric_gbn="+metric_gbn+"' width='100%' height='280' quality='high' bgcolor='#ffffff' name='mchart' align='middle' allowScriptAccess='sameDomain' pluginspage='http://www.macromedia.com/go/getflashplayer' type='application/x-shockwave-flash'></embed>");
+	document.write("</object>");
+}
+
+// 세로 막대 대쉬보드 
+function main_vertical_chart_flash(imgurl , admin_gubun, metric_gbn, year, month, anal_cycle, sabun)
+{
+	document.write("<object classid='clsid:D27CDB6E-AE6D-11cf-96B8-444553540000' codebase='http://download.macromedia.com/pub/shockwave/cabs/flash/swflash.cab#version=7,0,19,0' width='466' height='170' id='mchart' align='middle'>");
+	document.write("<param name='movie' value='"+imgurl+"/flash/VBOX_CHART.swf?_pWs=500&_pHs=170&_pPath="+root+"&_pParam=Main_vertical_bar_chart_xml.jsp?year="+year+"%26month="+month+"%26anal_cycle="+anal_cycle+"%26metric_gbn="+metric_gbn+"' />");
+	document.write("<param name='allowScriptAccess' value='sameDomain' />");
+	document.write("<param name='wmode' value='transparent' />");
+	document.write("<param name='quality' value='high' />");
+	document.write("<param name='bgcolor' value='#ffffff' />");
+	document.write("<embed src='"+imgurl+"/flash/mchart.swf?_pWs=500&_pHs=160&_pPath="+root+"&_pParam=Main_vertical_bar_chart_xml.jsp?year="+year+"%26month="+month+"%26anal_cycle="+anal_cycle+"%26metric_gbn="+metric_gbn+"' width='100%' height='198' quality='high' bgcolor='#ffffff' name='mchart' align='middle' allowScriptAccess='sameDomain' pluginspage='http://www.macromedia.com/go/getflashplayer' type='application/x-shockwave-flash'></embed>");
+	document.write("</object>");
+}
+
+function main_gauge_admin_flash(context, imgurl, admin_gubun, metric_gbn, year, month, anal_cycle, sabun, sc_dept_id)
+{
+	document.write("<object classid='clsid:D27CDB6E-AE6D-11cf-96B8-444553540000' codebase='http://download.macromedia.com/pub/shockwave/cabs/flash/swflash.cab#version=7,0,19,0' width='395' height='200' id='mchart' align='middle'>");
+	document.write("<param name='movie' value='"+imgurl+"/flash/VBOX_GAUGE.swf?_pPath="+root+"&_pParam="+context+"/mon/MainGuage_xml.jsp?admin_gubun="+admin_gubun+"%26metric_gbn="+metric_gbn+"%26year="+year+"%26month="+month+"%26anal_cycle="+anal_cycle+"%26sabun="+sabun+"%26sc_dept_id="+sc_dept_id+"' />");
+	document.write("<param name='wmode' value='transparent' />");
+	document.write("<param name='allowScriptAccess' value='sameDomain' />");
+	document.write("<param name='quality' value='high' />");
+	document.write("<param name='bgcolor' value='#ffffff' />");
+	document.write("<embed src='"+imgurl+"/flash/VBOX_GAUGE.swf?_pPath="+root+"&_pParam="+context+"/mon/MainGuage_xml.jsp?' width='251' height='245' quality='high' bgcolor='#ffffff' name='mchart' align='middle' allowScriptAccess='sameDomain' pluginspage='http://www.macromedia.com/go/getflashplayer' type='application/x-shockwave-flash'></embed>");
+	document.write("</object>");
+}
+
+//CSF 실적현황 파이 차트
+function main_pie_admin_flash(context, imgurl, year, month, anal_cycle, metric_gbn)  /* not use */
+{
+	document.write("<object classid='clsid:D27CDB6E-AE6D-11cf-96B8-444553540000' codebase='http://download.macromedia.com/pub/shockwave/cabs/flash/swflash.cab#version=7,0,19,0' width='200' height='195' id='mchart' align='middle'>");
+	document.write("<param name='movie' value='"+imgurl+"/flash/VBOX_CHARTPIE.swf?_pPath="+root+"&_pParam="+context+"/mon/Main_pie_chart_xml.jsp?year="+year+"%26month="+month+"%26metric_gbn=" + metric_gbn + "%26anal_cycle="+anal_cycle+"' />");
+	document.write("<param name='wmode' value='transparent' />");
+	document.write("<param name='allowScriptAccess' value='sameDomain' />");
+	document.write("<param name='quality' value='high' />");
+	document.write("<param name='bgcolor' value='#ffffff' />");
+	document.write("<embed strc='"+imgurl+"/flash/VBOX_CHARTPIE.swf?_pPath="+root+"&_pParam="+context+"/mon/Main_pie_chart_xml.jsp?' width='135' height='195' quality='high' bgcolor='#ffffff' name='mchart' align='middle' allowScriptAccess='sameDomain' pluginspage='http://www.macromedia.com/go/getflashplayer' type='application/x-shockwave-flash'></embed>");
+	document.write("</object>");
+}
+
+function res_vertical_chart_flash(context, imgurl ,question_id, res1, res2, res3, res4, res5, totalcnt)  /* not use */
+{
+
+	document.write("<object classid='clsid:D27CDB6E-AE6D-11cf-96B8-444553540000' codebase='http://download.macromedia.com/pub/shockwave/cabs/flash/swflash.cab#version=7,0,19,0' width='760' height='200' id='mchart' align='middle'>");
+	document.write("<param name='movie' value='"+imgurl+"/flash/VBOX_CHART.swf?_pWs=500&_pHs=170&_pPath="+root+"&_pParam="+context+"/survey/Result_vertical_bar_chart_xml.jsp?question_id="+question_id+"%26res1="+res1+"%26res2="+res2+"%26res3="+res3+"%26res4="+res4+"%26res5="+res5+"%26totalcnt="+totalcnt+"' />");
+	document.write("<param name='allowScriptAccess' value='sameDomain' />");
+	document.write("<param name='wmode' value='transparent' />");
+	document.write("<param name='quality' value='high' />");
+	document.write("<param name='bgcolor' value='#ffffff' />");
+	document.write("<embed src='"+imgurl+"/flash/mchart.swf?_pWs=500&_pHs=160&_pPath="+root+"&_pParam="+context+"/survey/Result_vertical_bar_chart_xml.jsp?question_id="+question_id+"%26res1="+res1+"%26res2="+res2+"%26res3="+res3+"%26res4="+res4+"%26res5="+res5+"%26totalcnt="+totalcnt+"' width='100%' height='198' quality='high' bgcolor='#ffffff' name='mchart' align='middle' allowScriptAccess='sameDomain' pluginspage='http://www.macromedia.com/go/getflashplayer' type='application/x-shockwave-flash'></embed>");
+	document.write("</object>");
+}
+
+
+function result_pie_admin_flash(context, imgurl, y_rate,n_rate ) /* not use */
+{
+
+	document.write("<object classid='clsid:D27CDB6E-AE6D-11cf-96B8-444553540000' codebase='http://download.macromedia.com/pub/shockwave/cabs/flash/swflash.cab#version=7,0,19,0' width='155' height='195' id='mchart' align='middle'>");
+	document.write("<param name='movie' value='"+imgurl+"/flash/VBOX_CHARTPIE.swf?_pPath="+root+"&_pParam="+context+"/survey/Result_pie_chart_xml.jsp?y_rate="+y_rate+"%26n_rate="+n_rate+"' />");
+	document.write("<param name='wmode' value='transparent' />");
+	document.write("<param name='allowScriptAccess' value='sameDomain' />");
+	document.write("<param name='quality' value='high' />");
+	document.write("<param name='bgcolor' value='#ffffff' />");
+	document.write("<embed strc='"+imgurl+"/flash/VBOX_CHARTPIE.swf?_pPath="+root+"&_pParam="+context+"/survey/Result_pie_chart_xml.jsp?y_rate="+y_rate+"%26n_rate="+n_rate+"' width='135' height='195' quality='high' bgcolor='#ffffff' name='mchart' align='middle' allowScriptAccess='sameDomain' pluginspage='http://www.macromedia.com/go/getflashplayer' type='application/x-shockwave-flash'></embed>");
+	document.write("</object>");
+}
+
+
+//동그라미 신호등 
+//IDWORKS Systems 2007.06.20
+var trafficObj; var trafficCnt=0;
+var trafficIDArray = new Array();var trafficValueArray = new Array();
+function signal_view(context, imgurl, signal_id, signal, year){
+	trafficIDArray[trafficCnt]=signal_id;trafficValueArray[trafficCnt]=signal;trafficCnt++;
+	if(trafficCnt == 1){signal_flash(context, imgurl, signal_id,signal,"true", year);}else{signal_flash(context, imgurl, signal_id,signal,"false", year);}
+}
+function signal_run(){
+	for(var i=0;i<trafficIDArray.length;i++){
+		thisMovie(trafficIDArray[i]).init_Signal(signal_return("VBOX_"+trafficValueArray[i]))
+	}
+}
+function signal_object(arg){trafficObj=arg; signal_run()}
+function signal_return(arg){return trafficObj[arg]}
+function thisMovie(movieName) {
+    if (navigator.appName.indexOf("Microsoft") != -1) {return window[movieName]}
+    else {      return document[movieName]  }
+}
+function signal_flash(context, imgurl, signal_id, signal, bool, year)
+{
+	var _pSignal = context+"/mon/trafficSignal_xml.jsp?year="+year; //신호레벨 XML
+	var size = "13"; //볼사이즈
+
+	document.write("<object classid='clsid:D27CDB6E-AE6D-11cf-96B8-444553540000' codebase='http://download.macromedia.com/pub/shockwave/cabs/flash/swflash.cab#version=8,0,0,0' width='"+size+"' height='"+size+"' id='"+signal_id+"' align='middle'>");
+	document.write("<param name='movie' value='"+imgurl+"/flash/traffic.swf?_pPath="+root+"&_pSignal="+_pSignal+"&_pSig="+signal+"&_pBool="+bool+"'>");
+	document.write("<param name='allowScriptAccess' value='always' />");
+	document.write("<param name='wmode' value='transparent' />");
+	document.write("<param name='quality' value='high' />");
+	document.write("<param name='bgcolor' value='#ffffff' />");
+	document.write("<embed src='traffic.swf' width='"+size+"' height='"+size+"' quality='high' bgcolor='#ffffff' name='"+signal_id+"' align='middle' allowScriptAccess='sameDomain' pluginspage='http://www.macromedia.com/go/getflashplayer' type='application/x-shockwave-flash'></embed>");
+	document.write("</object>");
+	
+	 eval("window." + signal_id + " = document.getElementById('" + signal_id + "');");
+}
+
+
+// 전략체계도 미니 사이즈 테스트
+function strategymap_flash_mini(context, imgurl, url, sabun, sc_dept_id, sc_dept_nm, admin_gubun, admin)
+{
+	document.write("<object classid='clsid:D27CDB6E-AE6D-11cf-96B8-444553540000' codebase='http://download.macromedia.com/pub/shockwave/cabs/flash/swflash.cab#version=7,0,19,0' width='500' height='465'>");
+	document.write("<param name='movie' value='"+imgurl+"/flash/VBOX_STRATEGYMAPS.swf?_pPath="+root+"&AdminBool="+admin+"&requestURL="+context+"/base/BaseStrategyMap_xml.jsp?"+url+"%26sc_dept_id=" + sc_dept_id + "%26sc_dept_nm=" + sc_dept_nm + "%26admin_bool="+admin+"' />");
+	document.write("<param name='wmode' value='transparent' />");
+	document.write("<param name='quality' value='high' />");
+	document.write("<embed src='"+imgurl+"/flash/VBOX_STRATEGYMAPS.swf?_pPath="+root+"&AdminBool="+admin+"&requestURL="+context+"/mon/vbox_test.xml' width='800' height='530' quality='high' pluginspage='http://www.macromedia.com/go/getflashplayer' type='application/x-shockwave-flash'></embed>");
+	document.write("</object>");
+}
+
+

@@ -1,0 +1,103 @@
+body 	{margin-top:0px; margin-left:10px;
+ 	scrollbar-3dlight-color:#CCCCCC; 
+	scrollbar-arrow-color:#666666; 
+	scrollbar-track-color:#F5F5F5; 
+	scrollbar-darkshadow-color:#CCCCCC; 
+	scrollbar-face-color:#DDDDDD; 
+	scrollbar-highlight-color:#FFFFFF; 
+	scrollbar-shadow-color:#FFFFFF  }
+
+/* ********************************** Å×µÎ¸®¹× ¹è°æÄ®¶ó **********************************  */
+
+.local_border	{background-color:#E2DDC2; width:180px; padding:1px;}
+
+.title	{background-color:#EFEFEF;background-image:url(../images/local/titleimg10.jpg); background-position:top left; background-repeat:no-repeat;
+	height:46px; color:#148D00; font-size:13px; font-weight:bold; padding-top:5px; padding-left:60px;}
+
+.local	{background-color:#F3F2E9; text-align:center; padding:0px 8px 8px 8px;}
+
+.local_middle	{background-color:#ffffff; text-align:center; padding:0px 7px;}
+
+
+.dept_bgtop	{background-image:url(../images/local/local_top.gif); background-position:top right;}
+.dept_bgbottom	{background-image:url(../images/local/local_bottom.gif); background-position:top right;}
+
+
+
+
+/* ********************************** ¸Þ´º  **********************************  */
+
+/* ÇØ´ç¸Þ´º ¼±ÅÃ½Ã */
+.dept_select	{font-weight:bold; letter-spacing:-1px;}
+
+
+
+
+/*1µª½º¸Þ´º */
+
+.dept1 {padding-top:2px; padding-bottom:2px; border-top:0px solid #BED162; background-color:#ffffff;
+	font-size:12px; color:#ffffff; text-decoration:none; font-family:"±¼¸²";}
+
+.dept1 A:link  		{font-size: 12px; color: #4D5C31; text-decoration: none; font-family:"±¼¸²";}
+.dept1 A:visited 	{font-size: 12px; color: #4D5C31; text-decoration: none; font-family:"±¼¸²";}
+.dept1 A:active 	{font-size: 12px; color: #4D5C31; text-decoration: none; font-family:"±¼¸²";}
+.dept1 A:hover  	{font-size: 12px; color: #8CB63C; text-decoration: none; font-family:"±¼¸²";}	
+.dept1 A:selected  	{font-size: 12px; color: #8CB63C; text-decoration: none; font-family:"±¼¸²";font-weight:bold;}	
+
+
+	/*1µª½º¸Þ´º / Ã¹ ¶óÀÎÀº ´Ù¸¥Å¬·¡½º Àû¿ë */
+	.dept1_first	{padding-top:8px; padding-bottom:4px;  background-color:#ffffff;
+			font-size:12px; color:#ffffff; text-decoration:none; font-family:"±¼¸²";}
+	
+	.dept1_first A:link  	{font-size: 12px; color: #4D5C31; text-decoration: none; font-family:"±¼¸²";}
+	.dept1_first A:visited 	{font-size: 12px; color: #4D5C31; text-decoration: none; font-family:"±¼¸²";}
+	.dept1_first A:active 	{font-size: 12px; color: #4D5C31; text-decoration: none; font-family:"±¼¸²";}
+	.dept1_first A:hover  	{font-size: 12px; color: #8CB63C; text-decoration: none; font-family:"±¼¸²";}	
+	
+
+
+
+/*2µª½º¸Þ´º */
+
+.dept2 {padding:7px 0px 3px 20px;  border-top:1px solid #BED162; background-color:#F1F7D5;
+	font-size:12px; color:#4D5C31; text-decoration:none; font-family:"±¼¸²";}
+
+.dept2 A:link  		{font-size: 12px; color: #4D5C31; text-decoration: none; font-family:"±¼¸²";}
+.dept2 A:visited 	{font-size: 12px; color: #4D5C31; text-decoration: none; font-family:"±¼¸²";}
+.dept2 A:active 	{font-size: 12px; color: #4D5C31; text-decoration: none; font-family:"±¼¸²";}
+.dept2 A:hover  	{font-size: 12px; color: #8CB63C; text-decoration: none; font-family:"±¼¸²";}	
+	
+
+/*3µª½º¸Þ´º */
+
+.dept3 {padding:7px 0px 3px 35px;   font-size:12px; color:#7D592A; text-decoration:none; font-family:"±¼¸²";
+	background:url(../images/local/dept3_bg.gif);}
+
+.dept3 A:link  		{font-size: 12px; color: #7D592A; text-decoration: none; font-family:"±¼¸²";}
+.dept3 A:visited 	{font-size: 12px; color: #7D592A; text-decoration: none; font-family:"±¼¸²";}
+.dept3 A:active 	{font-size: 12px; color: #7D592A; text-decoration: none; font-family:"±¼¸²";}
+.dept3 A:hover  	{font-size: 12px; color: #8CB63C; text-decoration: none; font-family:"±¼¸²";}	
+	
+
+	
+	
+	
+	
+	
+	
+
+/* ********************************** °áÀç´ë±â **********************************  */
+
+
+.box_field	{color:#29699C; font-size:11px; letter-spacing:-1px; font-family:"±¼¸²"; background-color:#E7EBF7;
+		padding-left:5px; height:20px; width:85px; padding-top:2px;}
+.box_body	{color:#424142; font-size:11px; font-family:"µ¸¿ò"; background-color:#F7FBFF;
+		padding-left:8px; padding-top:3px;}
+.box_body A:link  	{font-size: 11px; color: #424142; text-decoration: none; font-family:"µ¸¿ò";}
+.box_body A:visited 	{font-size: 11px; color: #424142; text-decoration: none; font-family:"µ¸¿ò";}
+.box_body A:active 	{font-size: 11px; color: #424142; text-decoration: none; font-family:"µ¸¿ò";}
+.box_body A:hover  	{font-size: 11px; color: #199ECB; text-decoration: none; font-family:"µ¸¿ò";}
+
+
+
+		

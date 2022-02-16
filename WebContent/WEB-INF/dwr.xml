@@ -1,0 +1,17 @@
+<!DOCTYPE dwr PUBLIC
+    "-//GetAhead Limited//DTD Direct Web Remoting 3.0//EN"
+    "http://getahead.org/dwr/dwr30.dtd">
+<dwr>
+
+  <allow>
+	    
+    <create creator="new" javascript="commonAction">
+      <param name="class" value="com.spc.chart.CommonAction"/>
+    </create>
+    
+    <convert converter="bean" match="com.spc.chart.vo.*" />
+
+
+  </allow>
+
+</dwr>

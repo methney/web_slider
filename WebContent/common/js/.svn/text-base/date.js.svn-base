@@ -1,0 +1,346 @@
+     /**
+	 * @author nox &lt;nox@lexken.co.kr&gt;, &lt;noxajax@gmail.com&gt;
+	 * @version 0.5, 2007/10/19, initial revision   
+	 * @see java.util.Locale
+	 * @fileOverview
+     * 
+	 * <p>Copyright (C) 2007 Lexken Corporation. All rights reserved.</p>
+	 * 
+	 * locale.js 파일은 지역별 현지화를 지원하기 위한 static object인 Locale 객체를 가지고 있습니다.<br />
+	 * 한가지 주의할 사항은 및 지켜야할 규칙은 char-set에 구애를 받지 않도록 모든 property 값은 UTF-8<br /> 
+	 * 문자열로 변환하여 설정해야 합니다.(ASCII 문자 제외한 다국어 - 한국어, 중국어등등)<br /><br />
+	 * 또한 모든 Locale 하위 객체는 동일한 형태를 유지해야 한다.<br />
+	 * ex) Locale.DATE
+	 */
+	 
+    /**
+     * @static
+	 */
+	var Locale = {
+	   US: {
+	       DATE : {
+	           G: ['AD', 'BC'],
+	           MMM: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
+	           MMMM: ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'],
+	           E: ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'],
+	           EEE: ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'],
+	           a: ['AM', 'PM']
+	       }
+	   },
+	   
+	   KOREAN: {
+	       DATE : {
+	           G: ['\uc11c\uae30', '\uae30\uc6d0\uc804'],
+	           MMM: ['1\uc6d4', '2\uc6d4', '3\uc6d4', '4\uc6d4', '5\uc6d4', '6\uc6d4', '7\uc6d4', '8\uc6d4', '9\uc6d4', '10\uc6d4', '11\uc6d4', '12\uc6d4'],
+	           MMMM: ['1\uc6d4', '2\uc6d4', '3\uc6d4', '4\uc6d4', '5\uc6d4', '6\uc6d4', '7\uc6d4', '8\uc6d4', '9\uc6d4', '10\uc6d4', '11\uc6d4', '12\uc6d4'],
+	           E: ['\uc77c', '\uc6d4', '\ud654', '\uc218', '\ubaa9', '\uae08', '\ud1a0'],
+	           EEE: ['\uc77c\uC694\uC77C', '\uc6d4\uC694\uC77C', '\ud654\uC694\uC77C', '\uc218\uC694\uC77C', '\ubaa9\uC694\uC77C', '\uae08\uC694\uC77C', '\ud1a0\uC694\uC77C'],
+	           a: ['\uC624\uC804', '\uC624\uD6C4']
+	       }
+	   }
+	};
+        
+	 /**
+	  * <p>DateUtil 객체는 특정 포맷의 문자 입력시 Date 객체를 반환하거나 유효한 날짜 형식인지 검사하는
+	  * 역할을 수행한다.</p>
+	  * 
+	  * DateUtil.Format이 허용하는 날짜 표현 형식은 다음과 같다. <br />
+	  * '20070101', '2007-01-01', '2007/01/01'
+	  * 
+	  * @static
+	  */
+	var DateUtil = {
+	    WEEK_DAY: 7, 
+	    Split: /[\.|\/|-]/g,
+		Format: /\b(\d{4})([\.|\/|-]{0,1})(?:0[1-9]|1[0-2]{2})([\.|\/|-]{0,1})(?:0[1-9]|[12][0-9]|3[01]{2})\b/,
+	
+		/**
+		 * DateUtil ��ü�� ����ϴ� ��¥ ����� ���ڸ� �Է��ϸ� Date ��ü�� ��ȯ, �� �ܴ̿� null ��ȯ
+		 * 
+		 * @example
+		 * var value = '20070101';
+		 * DateUtil.getDate(value);
+		 * 
+		 * @param {string} value DateUtil.Format ������ ��¥ ����  
+		 * @return {date} /ȿ�� ��¥�� Date ��ü�� ��ȯ �׷��� ��; ���� null
+		 */
+		getDate: function (value) {
+		    var strDate = String(value).replace (DateUtil.Split, '');
+		    var date = new Date (strDate.left(4) + '/' + strDate.substr(4, 2) + '/1');
+		    
+		    try {
+		        date.setFullYear(strDate.left(4));
+		        date.setMonth(parseInt(strDate.substr(4, 2), 10) - 1);
+		        date.setDate(parseInt(strDate.right(2), 10));
+		    } catch (e) {
+		        date = null;
+		    }
+		    return date;
+		},
+	
+	/**
+	 * DateUtil.split만 날짜 중간에 분리자로 허용(빈 문자열은 모두 제거) 
+	 * 
+	 * @example
+	 * DateUtil.isValidDate(120070101);
+	 * DateUtil.isValidDate('2007--01-01');
+	 * DateUtil.isValidDate('2007-01-01');
+	 * DateUtil.isValidDate('2007/01/01');
+	 * DateUtil.isValidDate('2007.01.01');
+	 * 
+	 * @param {string} value Date 객체로 변경 가능한지 검사할 문자
+	 * @return {boolean} 유효한 날짜 표현 형식이면 true
+	 */
+	    isValidDate: function(value) {
+	        return DateUtil.Format.test (String(value));
+	    }
+	};
+    
+    /**
+     * 날짜 관련 속성은 Locale object에 영향을 받는다.<br />
+     * Java SDK의 DateFormatSymbols 동작 방식을 따른다.
+     * @inherits Class
+     */
+    var DateFormatSymbols = Class.create();
+    /**
+     * @scope DateFormatSymbols.prototype
+     * @see java.text.DateFormatSymbols
+     */
+    Object.extend (DateFormatSymbols.prototype, {
+        /** 
+         * Set up the locale
+         * @private
+         * @property {Locale} locale Locale object
+         */
+        initialize: function (locale) {
+            this.locale = Object.clone(locale || Locale.KOREA);
+        },
+        
+        /**
+         * 서기, 기원전 배열 반환
+         * 
+         * @example
+         * var df = new DateFormatSymbols(Locale.KOREAN);
+         * df.getEras(); // ['오전', '오후']
+         * 
+         * @return {array}
+         */
+        getEras: function () { 
+            return this.locale.DATE.G;
+        },
+        
+        /**
+         * 월 표기의 full name 배열 반환
+         * 
+         * @example
+         * var df = new DateFormatSymbols(Locale.KOREAN);
+         * df.getMonths();
+         * 
+         * @return {array}
+         */
+        getMonths: function () {
+            return this.locale.DATE.MMMM;
+        },
+        
+        /**
+         * 월 표기의 short name 배열 반환
+         * 
+         * @example
+         * var df = new DateFormatSymbols(Locale.KOREAN);
+         * df.getShortMonths();
+         * 
+         * @return {array}
+         */
+        getShortMonths: function () {
+            return this.locale.DATE.MMM;
+        },
+        
+        /**
+         * 요일 표기의 full name 배열 반환
+         * 
+         * @example
+         * var df = new DateFormatSymbols(Locale.KOREAN);
+         * df.getWeekdays();
+         * 
+         * @return {array}
+         */
+        getWeekdays: function () {
+            return this.locale.DATE.EEE;
+        },
+        
+        /**
+         * 요일 표기의 short name 배열 반환
+         * 
+         * @example
+         * var df = new DateFormatSymbols(Locale.KOREAN);
+         * df.getShortWeekdays();
+         * 
+         * @return {array}
+         */
+        getShortWeekdays: function () {
+            return this.locale.DATE.E;
+        },
+        
+        /**
+         * 오전, 오후 배열 반환
+         * 
+         * @example
+         * var df = new DateFormatSymbols(Locale.KOREAN);
+         * df.getAmPmStrings();
+         * 
+         * @return {array}
+         */
+        getAmPmStrings: function () {
+            return this.locale.DATE.a;
+        }
+     });
+     
+    /**
+     * Date object를 원하는 날짜 표기 형태의 문자로 표기, 반드시 Locale정보가 포함된 DateFormatSymbols를 사용<br />
+     * Java SDK의 SimpleDateFormat의 동작 방식을 따른다.
+     * 
+     * @inherits Class
+     */      
+    var SimpleDateFormat = Class.create();
+    /**
+     * @scope SimpleDateFormat.prototype
+     * @see java.text.SimpleDateFormat
+     */
+    Object.extend (SimpleDateFormat.prototype, {
+        /**
+         * @private
+         * @property {string} pattern 정규식 패턴 문자
+         * @property {DateFormatSymbols} formatSymbols Locale 정보가 셋팅된 DateFormatSymbols object
+         */
+        initialize: function (pattern, formatSymbols) {
+            this.pattern = (pattern || 'yyyy/MM/dd');
+            this.formatSymbols = (formatSymbols || new DateFormatSymbols());
+        },
+        
+        /**
+         * Date object를 정규식 패턴에 맞게 표기 형태를 바꾼 문자 반환
+         * 
+         * @example
+         * var d = new Date();
+         * var df = new DateFormatSymbols(Locale.KOREAN);
+         * var sd = new SimpleDateFormat('yyyy.MMMM.dd', df);
+         * sd.format(d);
+         * sd.format(d, 'yy.MMM.dd a');
+         * sd.format(d, 'yyyy.M.dd a');
+         * sd.format(d, 'yyyy.M.dd h:m:s:S');
+         * sd.format(d, 'yyyy/M/dd EEE a h:m:s:SS');
+         * sd.format(d, 'D');
+         * sd.format(d, 'w');
+         * sd.format(d, 'W');
+         * sd.format(d, 'd');
+         * sd.format(d, 'E');
+         * sd.format(d, 'yyyy.MM.dd G 'at' HH:mm:ss z');
+         * 
+         * @param {date} date Date object
+         * @param {string} pattern 정규식 패턴 문자
+         * @return {string} 
+         */
+        format: function (date, pattern) {
+            if (!date || typeof date.getDate == 'undefined') return '';
+            var _symbols = this.formatSymbols, pattern = (pattern || this.pattern);
+            var regex = /"[^"]*"|'[^']*'|\b(?:D{1}|[w|W]{1}|E{1,3}|M{1,4}|d{1,2}|yy(?:yy)?|([hHkKmsS])\1?|a)\b/g;
+            return pattern.replace(regex, function($0) {
+                switch($0) {
+                    case 'yy':      return String(date.getFullYear()).right(2);
+                    case 'yyyy':    return date.getFullYear();
+                    case 'M':       return date.getMonth() + 1;
+                    case 'MM':      return CommonUtil.toZeroPadded(date.getMonth() + 1, 2);
+                    case 'MMM':
+                    case 'MMMM':    return _symbols.getShortMonths()[date.getMonth()];
+                    case 'w':       return date.getWeekOfYear();
+                    case 'W':       return date.getWeekOfMonth();
+                    case 'D':       return date.getDayOfYear();
+                    case 'd':       return date.getDate();
+                    case 'dd':      return CommonUtil.toZeroPadded(date.getDate(), 2);
+                    case 'F':		/* Day of week in month - Not implements!! */
+                    case 'E':       return _symbols.getShortWeekdays()[date.getDay()];
+                    case 'EE':
+                    case 'EEE':     return _symbols.getWeekdays()[date.getDay()];
+                    case 'a':       return _symbols.getAmPmStrings()[(12 > date.getHours() ? 0 : 1)];
+                    case 'H':       return date.getHours() - 1;
+                    case 'HH':      return CommonUtil.toZeroPadded(date.getHours() - 1, 2);
+                    case 'k':       return date.getHours();
+                    case 'kk':      return CommonUtil.toZeroPadded(date.getHours(), 2);
+                    case 'K':       return date.getHours() % 12 || 0;
+                    case 'KK':      return CommonUtil.toZeroPadded(date.getHours() % 12 || 0, 2);
+                    case 'h':       return date.getHours() % 12 || 12;
+                    case 'hh':      return CommonUtil.toZeroPadded(date.getHours() % 12 || 12, 2);
+                    case 'm':       return date.getMinutes();
+                    case 'mm':      return CommonUtil.toZeroPadded(date.getMinutes(), 2);
+                    case 's':       return date.getSeconds();
+                    case 'ss':      return CommonUtil.toZeroPadded(_this.getSeconds(), 2);
+                    case 'S':       return date.getMilliseconds();
+                    case 'SS':      return CommonUtil.toZeroPadded(date.getMilliseconds(), 4);
+                    default:        return $0.substr(1, $0.length - 2);
+                }
+            })
+        }
+    });
+          
+    /**
+     * Java SDK의 SimpleDateFormat의 Date and Time Patterns 일부를 따른다.
+     * @scope Date.prototype
+     */  
+    Object.extend (Date.prototype, {
+        /**
+         * 해당 날짜가 해당년도의 몇번째 주인지 숫자로 반환
+         * 
+         * @example
+         * var d = new Date();
+         * d.getWeekOfYear();
+         * 
+         * @return {integer} 몇번째 주
+         */
+        getWeekOfYear: function () {
+            var yearOfMonth = 0, d = new Date(this), curMonth = d.getMonth();
+            if (0 == curMonth) return this.getWeekOfMonth(); // 1월
+            for (var month = 0; month < curMonth; month++) {
+                d.setMonth(month + 1);
+                d.setDate(0);
+                yearOfMonth += d.getDate();
+            }
+            
+            return (parseInt(yearOfMonth / DateUtil.WEEK_DAY) 
+                    + (0 < yearOfMonth % DateUtil.WEEK_DAY ? 1 : 0)) + this.getWeekOfMonth();
+        },
+        
+        /**
+         * 해당 날짜가 해당달의 몇번째 주인지 숫자로 반환
+         * 
+         * @example
+         * var d = new Date();
+         * d.getWeekOfMonth();
+         * 
+         * @param {date} Date object
+         * @return {integer} 몇번째 주
+         */
+        getWeekOfMonth: function (date) {
+            var d = (date || this), fGapDay = d.getDay();
+            return parseInt((d.getDate() + d.getDay()) / DateUtil.WEEK_DAY)
+                    + (0 < (this.getDate() + d.getDay()) % DateUtil.WEEK_DAY ? 1 : 0);
+        },
+        
+        /**
+         * 해당 날짜가 해당년도의 몇번째 날짜인지 숫자로 반환
+         * 
+         * @example
+         * var d = new Date();
+         * d.getDayOfYear();
+         * 
+         * @return {integer} 몇번째 일수
+         */
+        getDayOfYear: function () {
+            var dayOfYear = 0, d = new Date(this), curMonth = d.getMonth();
+            for (var month = 0; month < curMonth; month++) {
+                d.setMonth(month + 1);
+                d.setDate(0);
+                dayOfYear += d.getDate();
+            }
+            return dayOfYear + this.getDate();
+        }
+    });

@@ -1,0 +1,32 @@
+.pagination {
+            font-family: 돋움,arial;
+            font-size:11px;
+        }
+        
+        
+.pagination a {
+    text-decoration: none;
+	border: solid 0px #AAE;
+	color: #15B;
+}
+
+.pagination a, .pagination span {
+    display: block;
+    float: left;
+    padding: 0.3em 0.5em;
+    margin-right: 5px;
+	margin-bottom: 5px;
+}
+
+.pagination .current {
+    background: #999999;
+    color: #fff;
+	border: solid 0px #AAE;
+}
+
+.pagination .current.prev, .pagination .current.next{
+	color:#999;
+	border-color:#999;
+	background:#fff;
+}
+

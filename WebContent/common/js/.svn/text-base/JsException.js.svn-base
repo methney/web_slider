@@ -1,0 +1,29 @@
+
+
+
+/**
+ * JsException 객체
+ *
+ * param funcName : Exception이 발생한 함수명
+ * param message : Exception 메시지
+ */
+function JsException(funcName, message) {
+	this.name = "JsException";
+	this.funcName = funcName
+	this.message = message;
+
+	this.alertException = alertException;
+}
+
+
+
+
+
+/**
+ * JsException 메시지를 출력한다.
+ *
+ * param e : JsException
+ */
+function alertException() {
+	alert("JsException이 발생했습니다. \nFunction : " + this.funcName + " \nMessage : " + this.message);
+}

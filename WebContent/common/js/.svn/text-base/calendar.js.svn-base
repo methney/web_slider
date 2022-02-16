@@ -1,0 +1,416 @@
+	/*
+	  (c) 2008 <nox@lexken.co.kr>, <noxajax@gmail.com> Lexken Inc.
+	  # Notice - required prototype.js
+	*/
+
+	var LexkenCalendar = Class.create();
+	LexkenCalendar.prototype = {
+        initialize: function(arguments) {
+        	this.DEF_MAX_INCREASE_YEAR = 4; 
+        	
+			this.configURL = (arguments['url'] || '');
+			if (!!this.configURL) {
+                var options = { asynchronous: (arguments['asynch'] || false), onComplete: this.getXMLConfig };
+                this.ajax = new Ajax.Request (this.configURL, options);
+			}
+    
+            this.shows = arguments['shows'];
+            this.selecteds = new Hash ();
+            this.notifyDayClick = arguments['clickEvent'];
+            this.dayClicked = (arguments['clickClose'] || '');
+            this.position = (arguments['position'] || 'absolute');
+            this.dateSplit = (arguments['dateSplit'] || '-');
+            this.headerType = (arguments['headerType'] || 'text');
+            this.initBasisCalendar (arguments);
+            this.initBasisCalendarEvent ();
+            
+            this.selectDayBlurListener = new Array(); // event.detach
+            this.selectDayListener = new Array();
+		},
+        
+        initBasisCalendar: function (arguments) {
+            this.df = new DateFormatSymbols((arguments['locale'] || Locale.KOREAN)); 
+            if (!this.configURL) return;
+            
+            // 추후 정리할 구문!
+            var xmlDoc = this.ajax.transport.responseXML;
+            
+            this.headerTag = this.getXMLCDATA (xmlDoc.getElementsByTagName ('header' + this.headerType)).pureHTML();                            
+            this.weekTag = this.getXMLCDATA (xmlDoc.getElementsByTagName ('week')).pureHTML();
+            this.weekLineTag = this.getXMLCDATA (xmlDoc.getElementsByTagName ('weekline')).pureHTML();
+            this.dayTag = this.getXMLCDATA (xmlDoc.getElementsByTagName ('day')).pureHTML();
+            this.sundayTag = this.getXMLCDATA (xmlDoc.getElementsByTagName ('sunday')).pureHTML();
+            this.saturdayTag = this.getXMLCDATA (xmlDoc.getElementsByTagName ('saturday')).pureHTML();
+            this.holidayTag = this.getXMLCDATA (xmlDoc.getElementsByTagName ('holiday')).pureHTML();
+            
+            this.calendar = $('_lexken_calendar_');
+		    this.close = $('_lexken_calClose_');
+		    this.header = $('_lexken_calHeader_');
+		    this.body = $('_lexken_calBody_');			   
+		    this.weekDays = ['_lexken_sunday_', '_lexken_monday_', '_lexken_thesday_', '_lexken_wednesday_'
+		                      , '_lexken_thursday_', '_lexken_friday_', '_lexken_saturday_'];
+		    var shortWeek = this.df.getShortWeekdays ();
+		  
+		    // count week tag - dummy!
+		    var sundaySeekCount = 0, saturdaySeekCount = 0, daySeekCount = 0, holidaySeekCount = 0;
+		    week = document.createElement (this.weekTag);
+			this.body.appendChild (week);
+			
+			var nSeek = 0;
+			Insertion.After (week, this.weekLineTag);
+			Insertion.Bottom (week, this.sundayTag);
+			this.sundayTagCount = week.childNodes.length;
+            $A(week.childNodes).each(function(node) {                 
+                if (Element.Methods.hasClassName(node, 'sunday')) sundaySeekCount = nSeek;
+                nSeek++;
+                node.parentNode.removeChild(node);  
+            });
+			
+			nSeek = 0;
+			Insertion.Bottom (week, this.saturdayTag);
+			this.saturdayTagCount = week.childNodes.length;
+            $A(week.childNodes).each(function(node) { 
+                if (Element.Methods.hasClassName(node, 'saturday')) saturdaySeekCount = nSeek;
+                nSeek++; 
+                node.parentNode.removeChild(node); 
+            });
+            
+            nSeek = 0;
+            Insertion.Bottom (week, this.dayTag);
+            this.dayTagCount = week.childNodes.length;
+            $A(week.childNodes).each(function(node) {
+                if (Element.Methods.hasClassName(node, 'day')) daySeekCount = nSeek;
+                nSeek++;
+                node.parentNode.removeChild(node); 
+            });
+            
+            nSeek = 0;
+            Insertion.Bottom (week, this.holidayTag);
+            this.holidayTagCount = week.childNodes.length;
+            $A(week.childNodes).each(function(node) {
+                if (Element.Methods.hasClassName(node, 'holiday')) holidaySeekCount = nSeek;
+                nSeek++;
+                node.parentNode.removeChild(node); 
+            });
+            
+            this.sundaySeekCount = sundaySeekCount;
+            this.saturdaySeekCount = saturdaySeekCount;
+            this.daySeekCount = daySeekCount;
+            this.holidaySeekCount = holidaySeekCount;
+            
+            this.body.appendChild(week);
+			if (!!this.body) {
+				this.weekTagCount = this.body.childNodes.length;
+				$A(this.body.childNodes).each(function (node) {
+					node.parentNode.removeChild(node);
+				});
+			}
+					    
+		    // 요일표시 ex) 월 화 수 ...
+		    for (var i = 0; i < shortWeek.length; i++) {
+               if (!$(this.weekDays[i])) continue;
+               var dayNode = document.createTextNode(shortWeek[i]);
+               $(this.weekDays[i]).appendChild (dayNode);
+		    }
+		    
+		    Insertion.Bottom (this.header, this.headerTag);
+		    this.initializeHeader ();
+        }, 
+                
+        // initialize calendar events!
+        initBasisCalendarEvent: function() {
+            var showListener = this.showCalendar.bindAsEventListener(this);
+			var closeListener = this.closeCalendar.bindAsEventListener (this);
+			if (!!this.close) Event.observe(this.close, 'click', closeListener);
+			
+			for (property in this.shows) {
+                var elem = $(property);
+                if (!this.shows[property]) {
+                    this.shows[property] = this.getDateToString (new Date());
+                }
+                this.selecteds.set (property, this.shows[property]);
+				if (!!elem) Event.observe(elem, 'click', showListener);
+            }
+		},
+		
+		initializeHeader: function () {
+		    if ('text' == this.headerType) {
+		        var prevMonthListener = this.prevMonthClick.bindAsEventListener (this);
+			    var nextMonthListener = this.nextMonthClick.bindAsEventListener (this);
+			    if (!!$('_lexken_prevm_')) Event.observe ($('_lexken_prevm_'), 'click', prevMonthListener);
+			    if (!!$('_lexken_nextm_')) Event.observe ($('_lexken_nextm_'), 'click', nextMonthListener);
+			    if (!$('_lexken_hdate_').firstChild) {
+		            $('_lexken_hdate_').appendChild (document.createTextNode (''));
+		        }		
+		    } else {
+		        var selYear = $('_lexken_year_'), selMonth = $('_lexken_month_');
+		        if (!selYear || !selMonth) return;
+		    
+    		    if (!!$('_lexken_prevm_')) Element.Methods.remove ($('_lexken_prevm_'));
+    		    if (!!$('_lexken_nrevm_')) Element.Methods.remove ($('_lexken_nrevm_'));
+    		    
+    		    Event.observe (selYear.id, 'change', this.changeYear.bindAsEventListener (this));
+    		    Event.observe (selMonth.id, 'change', this.changeMonth.bindAsEventListener (this));
+    		    
+    		    for (var i = 0; i < this.DEF_MAX_INCREASE_YEAR; i++) { // 년도 생성
+		            var opt = new Option ('', '');		        
+	                selYear.options[i] = opt;
+		        }
+		    
+	            for (var i = 0; i < 12; i++) { // 월생성
+		            var opt = new Option (i + 1, i + 1);
+		            selMonth.options[i] = opt;
+		        }
+		    }
+		},
+		
+		dispalyHeader: function () {
+		    var selectedDate = DateUtil.getDate (this.selecteds.get (this.curShow.id));
+            if (!selectedDate) return;             
+			if ('text' == this.headerType) {
+		        $('_lexken_hdate_').firstChild.nodeValue = this.getDateToString (selectedDate); 		        
+		    } else if ('select' == this.headerType) {
+		        var selYear = $('_lexken_year_'), selMonth = $('_lexken_month_');
+		        var firstYear = selectedDate.getFullYear() - 2, lastYear = selectedDate.getFullYear() + 1;
+		        for (var i = 0; firstYear <= lastYear; firstYear++, i++) {
+		        	selYear.options[i].value = firstYear;
+		        	selYear.options[i].text = firstYear;
+		        	if (firstYear == selectedDate.getFullYear()) selYear.options[i].selected = true;
+		        }
+		        
+		        selMonth.options[selectedDate.getMonth()].selected = true;		        
+    		}
+		},
+					
+		dayUnSelected: function(event) {
+			Event.stop (event);
+		},
+
+		dayClickFocus: function(event) {
+			Event.element (event).blur();
+			Event.stop (event);
+		},
+		
+		daySelected: function (event) {
+			var dayElement = Event.element (event);
+			Event.stop(event);
+			
+			if (!!dayElement.firstChild) {
+			    var selectedDate = DateUtil.getDate (this.selecteds.get (this.curShow.id));
+                if (!selectedDate) return;
+               
+                if (!!this.curSelectedDay) Element.Methods.removeClassName (this.curSelectedDay, 'select');                    
+                Element.Methods.addClassName (dayElement, 'select');
+                selectedDate.setDate (dayElement.firstChild.nodeValue);		    
+                this.selecteds.set (this.curShow.id, this.getDateToString (selectedDate));
+				this.curSelectedDay = dayElement;
+				this.shows[this.curShow.id] = this.selecteds.get (this.curShow.id);
+				if (!!this.dayClicked) this.closeCalendar ();				
+			    if (!!this.notifyDayClick) {			      
+			        this.notifyDayClick (this.selecteds.get (this.curShow.id), this.curShow.id, event);
+			    }    
+			}
+		},
+		
+		closeCalendar: function () { this.calendar.hide (); },
+		showCalendar: function (event) {
+		    if (!!this.curShow) this.calendar.hide ();
+		    this.curShow = Event.element (event);
+		    
+		    var dim = Element.Methods.getDimensions(this.calendar);
+		    var x = event.clientX, y = event.clientY;
+		    this.calendar.style.position = this.position;		    
+		    if (document.viewport.getWidth() < (x + dim.width)) {
+                x -= (x + dim.width + 10) - document.viewport.getWidth() - document.viewport.getScrollOffsets().left;
+		    }
+		    
+		    if (event.clientX <= dim.width) {
+		        x = dim.width * 2 - event.clientX;
+		    }
+		   /*
+		   if(y + 154 > document.viewport.getHeight() - y) {
+		    	y = 154 - y;
+		    }
+*/
+		    		   
+		    this.calendar.style.left = x + 'px';
+			this.calendar.style.top = y + 'px';
+			this.displayCalendar ();
+			this.calendar.show ();
+		},
+		
+		getDateToString: function (date) {
+		    var sd = new SimpleDateFormat ('yyyy' + this.dateSplit + 'MM' + this.dateSplit + 'dd', this.df);  
+		    return sd.format (date) 
+		},
+		
+		prevMonthClick: function(event) {
+		    var selectedDate = DateUtil.getDate (this.selecteds.get (this.curShow.id));  
+			if (!selectedDate) return;
+			selectedDate.setMonth (selectedDate.getMonth() - 1);
+			this.selecteds.set(this.curShow.id, this.getDateToString (selectedDate));
+			this.displayCalendar ();
+		},
+
+		nextMonthClick: function(event) {
+		    var selectedDate = DateUtil.getDate (this.selecteds.get (this.curShow.id));  
+			if (!selectedDate) return;
+			selectedDate.setMonth (selectedDate.getMonth() + 1);
+			this.selecteds.set(this.curShow.id, this.getDateToString (selectedDate));
+			this.displayCalendar ();
+		},
+		
+		changeYear: function (event) {
+		    var year = Event.element (event), orgYear = parseInt(year.value);
+		    var selectedDate = DateUtil.getDate (this.selecteds.get (this.curShow.id));  
+			if (!selectedDate) return;
+			
+		    for (var i = 0; i < year.options.length; i++) {
+		        var opt = year.options[i];
+		        var revYear = parseInt(opt.text) + (year.value > selectedDate.getFullYear() ? 1 : -1);		        
+		        opt.value = revYear;
+		        opt.selected = false;
+		        opt.text = revYear;
+		        if (orgYear == revYear) {
+		            opt.selected = true;
+		            selectedDate.setFullYear (revYear);
+		        }
+		    }
+		    
+		    this.selecteds.set (this.curShow.id, this.getDateToString (selectedDate));
+			this.displayCalendar ();
+		},
+		
+		changeMonth: function (event) {
+		    var selectedDate = DateUtil.getDate (this.selecteds.get (this.curShow.id));  
+			if (!selectedDate) return;
+		    selectedDate.setMonth (Event.element(event).value - 1);
+		    this.selecteds.set (this.curShow.id, this.getDateToString (selectedDate));
+			this.displayCalendar ();
+		},	
+				
+		displayCalendar: function() {
+			if (!this.body) return;
+			this.dispalyHeader ();
+			this.removeCalendarBody ();	
+			this.createWeeks ();
+		},
+		
+		removeCalendarBody: function () {
+		    var i = 0, childs = this.body.childNodes;   
+		    var selectedDate = DateUtil.getDate (this.selecteds.get (this.curShow.id));
+		    if (!!selectedDate) {
+            	var lastDate = new Date(selectedDate.getFullYear (), selectedDate.getMonth () + 1, 0);
+				i = lastDate.getWeekOfMonth() * this.weekTagCount - 1;
+			}
+			
+			// 생성된 주가 있으면 주표시 라인까지 포함하여 필요 없는 라인만 제거
+			for (; !!childs && i < childs.length;) {			
+				if (!childs[i]) break;
+				childs[i].parentNode.removeChild (childs[i]);
+			}
+		},
+		
+		createWeeks: function() {
+            var selectedDate = DateUtil.getDate (this.selecteds.get (this.curShow.id));
+            if (!selectedDate) return;
+            
+            var createdWeekCnt = 0, childs = this.body.childNodes;
+            var year = selectedDate.getFullYear (), month = selectedDate.getMonth ();
+			var firstDate = new Date (year, month, 1), lastDate = new Date(year, month + 1, 0);
+			var startNum = firstDate.getDay ();
+			var weekCount = parseInt ((lastDate.getDate() + startNum) / DateUtil.WEEK_DAY);
+			if (0 < ((lastDate.getDate() + startNum) % DateUtil.WEEK_DAY)) ++weekCount;
+			if (!!childs) {
+				createdWeekCnt = childs.length / this.weekTagCount;
+			}	
+			
+			for (var wi = 0; wi < weekCount; wi++) {				
+				if (createdWeekCnt <= wi) {
+					week = document.createElement (this.weekTag);
+					this.body.appendChild (week);
+					Insertion.After (week, this.weekLineTag);
+					this.createDays (wi, week, firstDate, lastDate, true);
+				} else {
+					this.createDays (wi, childs[wi * this.weekTagCount], firstDate, lastDate, false);
+				}
+			}
+		},
+
+		/* 정리가 필요한 구문 */
+		createDays: function (wi, week, firstDate, lastDate, bCreate) {
+		    if (!week || !firstDate || !lastDate) return;
+		    var skipNum = firstDate.getDay(), curDate = new Date (firstDate);
+			for (var wd = 0; wd < DateUtil.WEEK_DAY; wd++) {
+				var dayNode = null, text = '', nSeek = 0;
+				var fi = wi * DateUtil.WEEK_DAY + wd, li = wi * DateUtil.WEEK_DAY + wd - skipNum;
+				if (fi >= skipNum && li < lastDate.getDate()) {
+				    text = ++li;
+				    curDate.setDate (text);
+				}
+				
+				if (0 == wd) { // sunday				    
+				    if (!!bCreate) Insertion.Bottom (week, this.sundayTag);
+				    nSeek = this.sundaySeekCount;
+                } else if (DateUtil.WEEK_DAY == (wd + 1)) { // saturday                    
+                    if (!!bCreate) Insertion.Bottom (week, this.saturdayTag);
+                    nSeek = week.childNodes.length - (this.saturdayTagCount - this.saturdaySeekCount);
+				} else { // normal day				    
+				    if (!!bCreate) Insertion.Bottom (week, this.dayTag);
+				    nSeek = this.sundayTagCount + (wd * this.dayTagCount) - (this.dayTagCount + this.daySeekCount);
+				}
+				
+				dayNode = week.childNodes[nSeek];
+				dayNode.id = '_lexken_day' + ((wi + 1) * DateUtil.WEEK_DAY + (wd + 1));
+				if (!dayNode.firstChild) {
+				    dayNode.appendChild(document.createTextNode(''));
+				} 
+				
+				dayNode.firstChild.nodeValue = text;				
+				Event.stopObserving(dayNode, 'focus', this.selectDayBlurListener[dayNode.id]);
+				Event.stopObserving(dayNode, 'click', this.selectDayListener[dayNode.id]);
+				this.selectDayBlurListener[dayNode.id] = this.dayClickFocus.bindAsEventListener (this);
+				this.selectDayListener[dayNode.id] = this.daySelected.bindAsEventListener (this);
+				
+				Element.Methods.removeClassName (dayNode, 'cursor');
+				Element.Methods.removeClassName (dayNode, 'select');
+				
+				Event.observe (dayNode, 'focus', this.selectDayBlurListener[dayNode.id]);															
+				if ('' == text || this.unSelectDate > curDate) { // can not Click!
+				       	
+				} else {				    
+    			    Element.Methods.addClassName (dayNode, "cursor");
+    				Event.observe (dayNode, 'click', this.selectDayListener[dayNode.id]);	
+				}
+				
+				// 선택된 날짜 표시
+				if (!!text && (this.shows[this.curShow.id] == this.getDateToString (curDate))) {
+				    Element.Methods.addClassName (dayNode, 'select');
+				    this.curSelectedDay = dayNode;
+				}
+			}	
+		},
+
+        getXMLConfig: function (xmlHttp) {
+    		var txtBasis = '', xmlDoc = xmlHttp.responseXML;
+    		var basisNode = xmlDoc.getElementsByTagName ('basis');
+    		if (!basisNode || !basisNode.length) return;    	    			
+    		for (var i = 0; i < basisNode[0].childNodes.length; i++) {
+    			txtBasis += basisNode[0].childNodes[i].nodeValue.decodeUTF8();
+    		}
+    		
+    		// insert calendar HTML!
+    		Insertion.Bottom (document.body, txtBasis.pureHTML());
+        },
+        		
+		getXMLCDATA: function (node) {
+		    var txtCDATA = '';
+		    if (!!node && !!node.length) { 
+                for (var i = 0; i < node[0].childNodes.length; i++) {
+                    var txt = node[0].childNodes[i].nodeValue;
+                    txtCDATA +=  txt.decodeUTF8 ();
+                }
+            }
+            return txtCDATA;
+		}
+	};

@@ -1,0 +1,10 @@
+<!--
+/*************** body ***************/
+BODY,TD,form,center,option,pre,blockquote {font-size:9pt;font-family:µ¸¿ò,±¼¸²,verdana,tahoma; color:#606060;line-height:10%} 
+
+
+/*************** line ***************/
+.vertical  { border-left:solid 1px #999999; height:10px}
+.ver_w  { border-left:solid 1px #999999; border-bottom:solid 1px #999999; height:10px}
+
+-->

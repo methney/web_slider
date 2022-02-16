@@ -1,0 +1,133 @@
+<html>
+<head>
+<title>작업 중 입니다. </title>
+<meta http-equiv="Content-Type" content="text/html; charset=euc-kr">
+<style>
+	.msg
+	{
+		font-size:9pt;
+		font-family:굴림;
+		color:#25407B;
+	}
+	.neon
+	{
+		font-size:9pt;
+		font-family:굴림;
+	}
+</style>
+<script language="JavaScript">
+       
+        
+	var message="■■■■■■■■■■■■■■■■■■■■■■"
+	var neonbasecolor="#4264AD"
+	var neontextcolor="#529CFF"
+	var flashspeed=200
+	var n=0
+	
+	function neon()
+    {
+		if (n==0)
+        {
+			for (m=0;m<message.length;m++)
+				tempref[m].style.color=neonbasecolor
+		}
+		
+		tempref[n].style.color=neontextcolor
+		
+		if (n<tempref.length-1)
+			n++
+		else
+        {
+			n=0
+			clearInterval(flashing)
+			setTimeout("beginneon()",500)
+			return
+		}
+	}
+	
+	function beginneon()
+    {
+		if (document.all)
+		  flashing=setInterval("neon()",flashspeed)
+	}
+		
+	
+	//메인 윈도우를 클릭하면 다시..포커스를 프로그래스바로.옮긴다.
+    //테스트시엔..닫아줘라..골치아프다..
+    //실제 사용할땐..주석 풀어줘라...안그럼 이창혼자 하루종일 도는일도 생길수 있다.
+    
+    window.onblur = getFocusAgain;
+	
+	function getFocusAgain() { 		  
+	  self.focus();	  
+	}
+    
+	
+    //프로그래스 윈도우에서 커서를 모래시계로 바꾼다.
+    window.onload = loading;
+
+	function loading() 
+    { 		  
+	  waitBody.style.cursor ="wait";
+	}
+	
+	
+    //창이 비정상적으로 닫힐때의 기본 값
+    var retry = "AGAIN" ;		
+
+    //창이 비정상적으로 닫히면..자신을 다시 열기위해
+    //메인 윈도우의 함수를 호출한다.
+    window.onunload = exitPopupWin ;	
+	function exitPopupWin() 
+    { 		  
+	  if ( retry == "AGAIN" ) 
+      { 
+	    //자신을 열기위한 함수 호출
+        opener.ViewMessage();	  	    	  	  	    
+	    self.focus();	  	    
+	  }    
+	}		
+
+    //정상적인 닫기 
+    function selfClose()
+    {
+        retry = "CLOSE" ; 
+        self.close();
+    }
+</script>
+</head>
+<body id="waitBody" leftmargin="0" topmargin="0" oncontextmenu="return false" ondragstart="return false" onselectstart="return false">
+<center>
+   <table width="100%" height="100%" border="0" cellpadding="0" cellspacing="0">
+    <tr>
+      <td align="center">   
+        <br><br>
+	<span class="msg">작업 중 입니다. 잠시만 기다려 주십시요.</span><br>			
+	<script>			
+			if (document.all) {
+				document.write('<font color="'+neonbasecolor+'">');
+				
+				for (m=0;m<message.length;m++) {
+					document.write('<span class="neon" id="neonlight">'+message.charAt(m)+'</span>');
+				}
+				
+				document.write('</font>');
+				
+				var tempref = document.all.neonlight;
+			} else {
+				document.write(message);
+			}
+			
+            beginneon();
+	</script>
+    <!--실제 사용시에는 지워줘야한다.-->
+    <BR>
+    <!--a href="JavaScript:selfClose();">close</a-->
+    <!--실제 사용시에는 지워줘야한다.-->
+	</td>				
+    </tr>	           
+</table>   
+</center>
+</body>
+
+</html>
