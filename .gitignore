@@ -1,2 +1,5 @@
 src/com/spc/properties/
 .classpath
+.gitignore.bak
+.externalToolBuilders
+.settings
